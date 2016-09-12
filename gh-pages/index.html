@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A modern Javascript UI Library helping you build rich, interactive web applications">
+    <meta name="author" content="Chris Gregg">
+
+    <title>FlowUI - A modern Javascript UI Library</title>
+
+    <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/site.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Demo -->
+    <link rel="stylesheet" href="css/prettify.css" />
+    <script src="js/prettify.js"></script>
+
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#page-top"><img src="img/flow-logo.png" /></a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#about">About</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#download">Download</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#docs">Docs</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#contribute">Contribute</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div id="about" class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <img class="img-responsive" src="img/flow-logo.png" alt="FlowUI">
+                    <div class="intro-text">
+                        <span class="skills">A modern Javascript UI library for adding rich, responsive UI components to web applications.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center cta-buttons">
+                    <a href="https://github.com/softchoice-public/FlowUI" class="btn btn-lg btn-outline" title="Download FlowUI">
+                        <i class="fa fa-download"></i> Download v.0.0.2
+                    </a>
+                    <a href="https://github.com/softchoice-public/FlowUI" class="btn btn-lg btn-outline" title="View FlowUI Project on GitHub">
+                        <i class="fa fa-github"></i> View on GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Portfolio Grid Section -->
+    <section id="components">
+        <div class="container">
+            <div class="row text-center">
+                <div class="portfolio-item">
+                    <a href="./dialog" class="portfolio-link dialogs" data-toggle="modal">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <i class="fa fa-search-plus fa-3x"></i>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="title">Dialog</div>
+                </div>
+                <div class="portfolio-item">
+                    <a href="./loader" class="portfolio-link dialogs">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <i class="fa fa-search-plus fa-3x"></i>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="title">Loader</div>
+                </div>
+                <div class="portfolio-item">
+                    <a href="#portfolioModal1" class="portfolio-link dialogs" data-toggle="modal">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <i class="fa fa-search-plus fa-3x"></i>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="title">Coming Soon</div>
+                </div>
+                <div class="portfolio-item">
+                    <a href="#portfolioModal1" class="portfolio-link dialogs" data-toggle="modal">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <i class="fa fa-search-plus fa-3x"></i>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="title">Comming Soon</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="success" id="download">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Download</h2>
+                    <hr class="star-light">
+                </div>
+            </div>
+            <div class="row row-packages">
+                <div class="col-lg-5 col-lg-offset-1 text-center">
+                    <h4>Bower</h4>
+                    <p>If you're using Bower to manage your packages, you can easily include FlowUI in your project by issuing the following terminal command:</p>
+
+                    <!-- Bower -->
+                    <div class="example">
+                        <div class="code">
+                            <pre class="prettyprint">
+
+> bower install flowui
+                            </pre>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-5 text-center">
+                    <h4>Node Package Manager</h4>
+                    <p>FlowUI can also be installed if you're using NPM. To add FlowUI to your project, issue the following terminal command:</p>
+
+
+                    <!-- NPM -->
+                    <div class="example">
+                        <div class="code">
+                            <pre class="prettyprint">
+
+> npm install flowui
+                            </pre>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row row-download">
+                <div class="col-lg-10 col-lg-offset-1 text-center">
+                    <a href="dist/flowui.zip" class="btn btn-lg btn-outline btn-secondary">
+                        <i class="fa fa-download"></i> Download v.0.0.2
+                    </a>
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="docs">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Documentation</h2>
+                    <hr class="star-primary">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <p>Each UI component of FlowUI is individually documented with code examples.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h4>Dialog</h4>
+                    <a href="https://github.com/softchoice-public/FlowUI-Dialog#readme" class="btn btn-md btn-primary btn-outline">
+                        API Reference
+                    </a>
+                    <a href="./dialog" class="btn btn-md btn-primary btn-outline">
+                        Examples
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h4>Dialog</h4>
+                    <a href="https://github.com/softchoice-public/FlowUI-Loader#readme" class="btn btn-md btn-primary btn-outline">
+                        API Reference
+                    </a>
+                    <a href="./loader" class="btn btn-md btn-primary btn-outline">
+                        Examples
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="footer-above">
+            <div class="container">
+                <div class="row">
+                    <div class="footer-col col-lg-8 col-md-offset-2">
+                        <ul class="list-inline">
+                            <li>
+                                <a href="https://github.com/softchoice-public" class="btn-social btn-outline"><i class="fa fa-fw fa-github"></i></a>
+                            </li>
+                        </ul>
+                        <div>This project is made possible by <a href="http://www.softchoice.com">Softchoice</a></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        © Copyright 2016. Softchoice - All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+    <div class="scroll-top page-scroll visible-xs visible-sm">
+        <a class="btn btn-primary" href="#page-top">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+    </div>
+
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="js/classie.js"></script>
+    <script src="js/cbpAnimatedHeader.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+    <script src="js/contact_me.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="js/freelancer.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        init();
+    </script>
+
+</body>
+
+</html>

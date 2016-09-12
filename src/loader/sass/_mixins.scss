@@ -1,0 +1,5 @@
+@mixin mixin-box-sizing($type) {
+  box-sizing: $type; // fixes bootstrap issue
+  -moz-box-sizing: $type; // fixes bootstrap issue
+  -webkit-box-sizing: $type; // fixes bootstrap issue
+}

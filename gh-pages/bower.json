@@ -1,0 +1,23 @@
+{
+  "name": "FlowUIDemo",
+  "homepage": "http://softchoice-public.github.io/FlowUI",
+  "authors": [
+    "Chris Gregg <topher.gregg@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "flowui-loader": "*",
+    "flowui-dialog": "*",
+    "flowui": "*"
+  }
+}

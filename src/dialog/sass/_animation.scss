@@ -1,0 +1,257 @@
+$modal-animation-duration: 1s;
+$dialog-animation-duration: 0.5s;
+$dialog-animation-delay: 0s;
+
+.flowui-modal.animated {
+  -webkit-animation-duration:$modal-animation-duration;
+  animation-duration: $modal-animation-duration;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+.flowui-modal.fadeOut {
+  animation-delay: $dialog-animation-duration;
+  -webkit-animation-delay: $dialog-animation-duration;
+}
+
+.flowui-dialog.animated {
+  -webkit-animation-duration:$dialog-animation-duration;
+  animation-duration: $dialog-animation-duration;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  animation-delay: $dialog-animation-delay;
+  -webkit-animation-delay: $dialog-animation-delay;
+}
+
+/* Zoom In */
+@-webkit-keyframes zoomIn {
+  from {
+    opacity: 0;
+    -webkit-transform: scale3d(.9, .9, .9);
+    transform: scale3d(.9, .9, .9);
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    -webkit-transform: scale3d(.9, .9, .9);
+    transform: scale3d(.9, .9, .9);
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.zoomIn {
+  -webkit-animation-name: zoomIn;
+  animation-name: zoomIn;
+}
+
+
+/* Zoom Out */
+@-webkit-keyframes zoomOut {
+  from {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+    -webkit-transform: scale3d(.9, .9, .9);
+    transform: scale3d(.9, .9, .9);
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+    -webkit-transform: scale3d(.9, .9, .9);
+    transform: scale3d(.9, .9, .9);
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.zoomOut {
+  -webkit-animation-name: zoomOut;
+  animation-name: zoomOut;
+}
+
+/* Fade In */
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+/* Fade Out */
+@-webkit-keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.fadeOut {
+  -webkit-animation-name: fadeOut;
+  animation-name: fadeOut;
+}
+
+
+
+/* PulseIn */
+@-webkit-keyframes pulseIn {
+  from {
+    opacity:0;
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+
+  50% {
+    opacity:1;
+    -webkit-transform: scale3d(1.05, 1.05, 1.05);
+    transform: scale3d(1.05, 1.05, 1.05);
+  }
+
+  to {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes pulseIn {
+  from {
+    opacity:0;
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+
+  50% {
+    opacity:1;
+    -webkit-transform: scale3d(1.025, 1.025, 1.025);
+    transform: scale3d(1.025, 1.025, 1.025);
+  }
+
+  to {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+.pulseIn {
+  -webkit-animation-name: pulseIn;
+  animation-name: pulseIn;
+  -webkit-animation-duration:0.25s;
+  animation-duration: 0.25s;
+}
+
+
+/* PulseOut */
+@-webkit-keyframes pulseOut {
+  from {
+    opacity:1;
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+
+  50% {
+    -webkit-transform: scale3d(1.05, 1.05, 1.05);
+    transform: scale3d(1.05, 1.05, 1.05);
+  }
+
+  to {
+    opacity:0;
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes pulseOut {
+  from {
+    opacity:1;
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+
+  50% {
+    -webkit-transform: scale3d(1.025, 1.025, 1.025);
+    transform: scale3d(1.025, 1.025, 1.025);
+  }
+
+  to {
+    opacity:0;
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+.pulseOut {
+  -webkit-animation-name: pulseOut;
+  animation-name: pulseOut;
+  -webkit-animation-duration:0.25s;
+  animation-duration: 0.25s;
+}
+
+
+// InactiveOut : Used when dialog is set to inactive state,
+// and new dialog has focus
+@keyframes inactiveOut {
+  from {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: scale3d(.9, .9, .9);
+    transform: scale3d(.9, .9, .9);
+  }
+}
