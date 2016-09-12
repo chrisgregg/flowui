@@ -2,7 +2,7 @@ var demo = {
 
     standard: function() {
 
-        var loader = new flowui.Loader();
+        var loader = new FlowUI.Loader();
 
         setTimeout((function() { loader.close(); }), 5000);
     }

@@ -10,6 +10,7 @@ module.exports = class Dialog {
      *  html: Html to inject
      *  url: URL to inject content from
      *  parent: Element to inject modal (as query expression)
+     *  escapable: True to allow user to close via escape button (default)
      *  animation: {
      *   in: "fadeIn" | "pulseIn" | "zoomIn"
      *   out: "fadeOut" | "pulseOut" | "zooOut"
@@ -23,7 +24,7 @@ module.exports = class Dialog {
      *  ]
      * }
      */
-    constructor({id, title, html, url, parent, animation = {}, events = {}, buttons = [], promise }) {
+    constructor({id, title, html, url, parent, escapable = true, animation = {}, events = {}, buttons = [], promise }) {
 
         this.id = (id || new Date().getTime());
         this.dialogId = "dialog-" + this.id;	// ID for Dialog Element
@@ -36,6 +37,7 @@ module.exports = class Dialog {
         this.modalObj;
         this.loaderObj;
         this.buttons = buttons;
+        this.escapable = escapable;
 
         this.animation = {
             in: animation.in || "fadeIn",
@@ -47,9 +49,8 @@ module.exports = class Dialog {
             onclose: events.onclose
         };
 
-
         this._renderDialog();
-
+        this._attachEvents();
         this._exportObjInstance();
 
     }
@@ -81,6 +82,7 @@ module.exports = class Dialog {
      * @private
      */
      _renderModal() {
+
         this.modalObj = new window['FlowUI'].Modal({
             id: this.modalId
         });
@@ -350,6 +352,21 @@ module.exports = class Dialog {
                 dialog._setState("inactive");
             }
         }
+    }
+
+    /**
+     * Bind any necessary events
+     * @private
+     */
+    _attachEvents() {
+
+        // Allow user to hit escape to close window (unless overwritten by param)
+        if (this.escapable) {
+            window.addEventListener("keyup", (event) => {
+                this._close();
+            });
+        }
+
     }
 
 }

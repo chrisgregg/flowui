@@ -45,7 +45,11 @@ module.exports = function () {
 	_createClass(Modal, [{
 		key: '_render',
 		value: function _render() {
+
 			if (!document.getElementById(this.id)) {
+
+				this.parent.className += ' flowui-modal-parent';
+
 				var container = document.createElement("div");
 				container.setAttribute("id", this.id);
 				container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
@@ -61,12 +65,14 @@ module.exports = function () {
 	}, {
 		key: '_close',
 		value: function _close() {
+			var _this = this;
 
 			var modalElement = document.getElementById(this.id);
 			modalElement.className += " fadeOut";
 
 			setTimeout(function () {
 				modalElement.parentNode.removeChild(modalElement);
+				_this.parent.className = _this.parent.className.replace('flowui-modal-parent', '');
 			}, 1000);
 		}
 	}]);

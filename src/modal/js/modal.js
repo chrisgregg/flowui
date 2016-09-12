@@ -24,7 +24,11 @@ module.exports = class Modal {
 	 * @private
 	 */
 	_render() {
+
 		if (!document.getElementById(this.id)) {
+
+			this.parent.className += ' flowui-modal-parent';
+
 			const container = document.createElement("div");
 			container.setAttribute("id", this.id);
 			container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
@@ -43,6 +47,7 @@ module.exports = class Modal {
 
         setTimeout(() => {
             modalElement.parentNode.removeChild(modalElement);
+			this.parent.className = this.parent.className.replace('flowui-modal-parent', '');
         }, 1000);
 	}
 

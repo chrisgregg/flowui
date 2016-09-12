@@ -1,0 +1,25 @@
+{
+  "name": "FlowUI",
+  "description": "A set of modular UI components for web and mobile apps",
+  "main": [
+    "./dist/flowui.css",
+    "./dist/flowui.js",
+    "./dist/flowui.min.js"
+  ],
+  "authors": [
+    "chris.gregg@softchoice.com"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/softchoice-public/FlowUI",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "gh-pages",
+    "test",
+    "gulpfile.js",
+    "package.json",
+    "bower.json",
+    "tests"
+  ]
+}

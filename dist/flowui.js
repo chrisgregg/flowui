@@ -17,6 +17,7 @@ module.exports = function () {
      *  html: Html to inject
      *  url: URL to inject content from
      *  parent: Element to inject modal (as query expression)
+     *  escapable: True to allow user to close via escape button (default)
      *  animation: {
      *   in: "fadeIn" | "pulseIn" | "zoomIn"
      *   out: "fadeOut" | "pulseOut" | "zooOut"
@@ -36,6 +37,8 @@ module.exports = function () {
         var html = _ref.html;
         var url = _ref.url;
         var parent = _ref.parent;
+        var _ref$escapable = _ref.escapable;
+        var escapable = _ref$escapable === undefined ? true : _ref$escapable;
         var _ref$animation = _ref.animation;
         var animation = _ref$animation === undefined ? {} : _ref$animation;
         var _ref$events = _ref.events;
@@ -57,6 +60,7 @@ module.exports = function () {
         this.modalObj;
         this.loaderObj;
         this.buttons = buttons;
+        this.escapable = escapable;
 
         this.animation = {
             in: animation.in || "fadeIn",
@@ -69,7 +73,7 @@ module.exports = function () {
         };
 
         this._renderDialog();
-
+        this._attachEvents();
         this._exportObjInstance();
     }
 
@@ -96,6 +100,7 @@ module.exports = function () {
     }, {
         key: "_renderModal",
         value: function _renderModal() {
+
             this.modalObj = new window['FlowUI'].Modal({
                 id: this.modalId
             });
@@ -380,6 +385,24 @@ module.exports = function () {
                 }
             }
         }
+
+        /**
+         * Bind any necessary events
+         * @private
+         */
+
+    }, {
+        key: "_attachEvents",
+        value: function _attachEvents() {
+            var _this4 = this;
+
+            // Allow user to hit escape to close window (unless overwritten by param)
+            if (this.escapable) {
+                window.addEventListener("keyup", function (event) {
+                    _this4._close();
+                });
+            }
+        }
     }, {
         key: "close",
         get: function get() {
@@ -454,17 +477,18 @@ module.exports = function () {
 
             this._renderModal();
 
+            // Check that element doesn't already exist
             if (!document.getElementById(this.loaderId)) {
-                var _container = document.createElement("div");
-                _container.id = this.loaderId;
-                _container.className = "flowui-loader";
+                var container = document.createElement("div");
+                container.id = this.loaderId;
+                container.className = "flowui-loader";
 
                 var loaderElement = document.createElement("div");
                 loaderElement.className = "spinner";
-                _container.appendChild(loaderElement);
-            }
+                container.appendChild(loaderElement);
 
-            document.getElementById(this.modalObj.id).appendChild(container);
+                document.getElementById(this.modalObj.id).appendChild(container);
+            }
 
             this._centerVertically();
             this._animateIn();
@@ -485,7 +509,7 @@ module.exports = function () {
         }
 
         /**
-         * Centre Dialog Vertically in Viewport
+         * Centre Dialog Vertically in Parent Element
          * @private
          */
 
@@ -494,16 +518,25 @@ module.exports = function () {
         value: function _centerVertically() {
 
             var loaderElement = document.getElementById(this.loaderId);
-            var modalHeight = document.getElementById(this.modalObj.id).offsetHeight;
             var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-            var viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+            var parentHeight = Math.max(this.parent.clientHeight, this.parent.innerHeight || 0);
             var loaderHeight = loaderElement.offsetHeight;
             var loaderWidth = loaderElement.offsetWidth;
             var scrollPosition = window.scrollY;
-            var topLoaderDiv = scrollPosition + viewportHeight / 2 - loaderHeight / 2;
 
-            console.log('loaderHeight', loaderHeight);
-            console.log('loaderWidth', loaderWidth);
+            // Center vertically in parent container
+            var topLoaderDiv = parentHeight / 2 - loaderHeight / 2;
+
+            // If parentHeight is >= viewportHeight, we need to use viewportHeight instead
+            if (parentHeight > viewportHeight) {
+                topLoaderDiv = viewportHeight / 2 - loaderHeight / 2;
+
+                // If user is scrolled down at all, we need to adjust to make sure loader
+                // is displayed within current viewport
+                if (scrollPosition > 0) {
+                    topLoaderDiv += scrollPosition;
+                }
+            }
 
             loaderElement.style.top = topLoaderDiv + "px";
             loaderElement.style.left = 'calc(50% - ' + loaderWidth / 2 + 'px)';
@@ -611,7 +644,11 @@ module.exports = function () {
 	_createClass(Modal, [{
 		key: '_render',
 		value: function _render() {
+
 			if (!document.getElementById(this.id)) {
+
+				this.parent.className += ' flowui-modal-parent';
+
 				var container = document.createElement("div");
 				container.setAttribute("id", this.id);
 				container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
@@ -627,12 +664,14 @@ module.exports = function () {
 	}, {
 		key: '_close',
 		value: function _close() {
+			var _this = this;
 
 			var modalElement = document.getElementById(this.id);
 			modalElement.className += " fadeOut";
 
 			setTimeout(function () {
 				modalElement.parentNode.removeChild(modalElement);
+				_this.parent.className = _this.parent.className.replace('flowui-modal-parent', '');
 			}, 1000);
 		}
 	}]);

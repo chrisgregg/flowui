@@ -35,6 +35,7 @@ module.exports = class Loader {
 
         this._renderModal();
 
+        // Check that element doesn't already exist
         if (!document.getElementById(this.loaderId)) {
             let container = document.createElement("div");
             container.id = this.loaderId;
@@ -43,10 +44,9 @@ module.exports = class Loader {
             let loaderElement = document.createElement("div");
             loaderElement.className = "spinner";
             container.appendChild(loaderElement);
+
+            document.getElementById(this.modalObj.id).appendChild(container);
         }
-
-
-        document.getElementById(this.modalObj.id).appendChild(container);
 
         this._centerVertically();
         this._animateIn();
@@ -66,22 +66,31 @@ module.exports = class Loader {
     }
 
     /**
-     * Centre Dialog Vertically in Viewport
+     * Centre Dialog Vertically in Parent Element
      * @private
      */
     _centerVertically() {
 
         let loaderElement = document.getElementById(this.loaderId);
-        const modalHeight = document.getElementById(this.modalObj.id).offsetHeight;
         const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-        const viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        const parentHeight = Math.max(this.parent.clientHeight, this.parent.innerHeight || 0);
         const loaderHeight = loaderElement.offsetHeight;
         const loaderWidth = loaderElement.offsetWidth;
         const scrollPosition = window.scrollY;
-        const topLoaderDiv = scrollPosition + (viewportHeight / 2) - (loaderHeight / 2);
 
-        console.log('loaderHeight',loaderHeight)
-        console.log('loaderWidth',loaderWidth)
+        // Center vertically in parent container
+        let topLoaderDiv = (parentHeight / 2) - (loaderHeight / 2);
+
+        // If parentHeight is >= viewportHeight, we need to use viewportHeight instead
+        if (parentHeight > viewportHeight) {
+            topLoaderDiv = (viewportHeight / 2) - (loaderHeight / 2);
+
+            // If user is scrolled down at all, we need to adjust to make sure loader
+            // is displayed within current viewport
+            if (scrollPosition > 0) {
+                topLoaderDiv += scrollPosition;
+            }
+        }
 
         loaderElement.style.top = topLoaderDiv + "px";
         loaderElement.style.left = 'calc(50% - ' + (loaderWidth/2)  + 'px)';
