@@ -3,8 +3,7 @@
   "description": "A set of modular UI components for web and mobile apps",
   "main": [
     "./dist/flowui.css",
-    "./dist/flowui.js",
-    "./dist/flowui.min.js"
+    "./dist/flowui.js"
   ],
   "authors": [
     "chris.gregg@softchoice.com"

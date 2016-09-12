@@ -16,6 +16,8 @@ module.exports = function () {
      *  title: Dialog Title
      *  html: Html to inject
      *  url: URL to inject content from
+     *  promise: Promise object to get content from
+     *  className: CSS class to add to element
      *  parent: Element to inject modal (as query expression)
      *  escapable: True to allow user to close via escape button (default)
      *  animation: {
@@ -37,6 +39,7 @@ module.exports = function () {
         var html = _ref.html;
         var url = _ref.url;
         var parent = _ref.parent;
+        var className = _ref.className;
         var _ref$escapable = _ref.escapable;
         var escapable = _ref$escapable === undefined ? true : _ref$escapable;
         var _ref$animation = _ref.animation;
@@ -57,6 +60,7 @@ module.exports = function () {
         this.url = url;
         this.promise = promise;
         this.parent = parent ? (typeof parent === "undefined" ? "undefined" : _typeof(parent)) === 'object' ? parent : document.querySelector(parent) : document.body;
+        this.className = className;
         this.modalObj;
         this.loaderObj;
         this.buttons = buttons;
@@ -177,7 +181,7 @@ module.exports = function () {
             // Render Container
             var container = document.createElement("div");
             container.setAttribute('id', this.dialogId);
-            container.setAttribute('class', 'flowui-dialog animated ');
+            container.setAttribute('class', 'flowui-dialog animated ' + (this.className ? this.className : ''));
             container.style.display = "none";
 
             // Render Content Wrapper
