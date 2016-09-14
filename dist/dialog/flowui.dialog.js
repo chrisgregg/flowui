@@ -52,6 +52,7 @@ module.exports = function () {
 
         _classCallCheck(this, Dialog);
 
+        // Arguments
         this.id = id || new Date().getTime();
         this.dialogId = "dialog-" + this.id; // ID for Dialog Element
         this.modalId = "modal-" + this.id; // Generated ID for parent Modal
@@ -76,8 +77,12 @@ module.exports = function () {
             onclose: events.onclose
         };
 
+        // Public Properties
+        this.dialogElement = null;
+
         this._renderDialog();
         this._attachEvents();
+        this._registerEventListeners();
         this._exportObjInstance();
     }
 
@@ -91,9 +96,9 @@ module.exports = function () {
          * @private
          */
         value: function _exportObjInstance() {
-            window.leanjs = window.leanjs || {};
-            window.leanjs.dialogs = window.leanjs.dialogs || {};
-            window.leanjs.dialogs[this.id] = this;
+            window['FlowUI'] = window['FlowUI'] || {};
+            window['FlowUI']._dialogs = window['FlowUI']._dialogs || {};
+            window['FlowUI']._dialogs[this.id] = this;
         }
 
         /**
@@ -105,13 +110,21 @@ module.exports = function () {
         key: "_renderModal",
         value: function _renderModal() {
 
-            this.modalObj = new window['FlowUI'].Modal({
-                id: this.modalId
-            });
+            // Check if modal already exists for parent
+            var existingModal = this.parent.getElementsByClassName('flowui-modal')[0];
+            if (existingModal) {
+                this.modalObj = window['FlowUI']._modals[existingModal.id];
+                this.modalId = existingModal.id;
+            }
+            // Otherwise, create new instance
+            else {
+                    this.modalObj = new window['FlowUI'].Modal({
+                        id: this.modalId
+                    });
+                }
 
             // If dialog content requires http request, show loader before rendering
             if (this.url || this.promise) {
-
                 this.loaderObj = new window['FlowUI'].Loader({
                     modalId: this.modalId
                 });
@@ -182,7 +195,7 @@ module.exports = function () {
             var container = document.createElement("div");
             container.setAttribute('id', this.dialogId);
             container.setAttribute('class', 'flowui-dialog animated ' + (this.className ? this.className : ''));
-            container.style.display = "none";
+            //container.style.display = "none";
 
             // Render Content Wrapper
             var contentWrapper = document.createElement('div');
@@ -232,6 +245,9 @@ module.exports = function () {
             var modalElement = document.getElementById(this.modalObj.id);
             modalElement.appendChild(container);
 
+            // Store dialog element to global property
+            this.dialogElement = container;
+
             // Once content loaded, display
             this._getContent().then(function () {
 
@@ -241,7 +257,6 @@ module.exports = function () {
                 }
 
                 _this2._centerVertically();
-                _this2._animateIn();
                 _this2._focus();
             });
         }
@@ -258,26 +273,17 @@ module.exports = function () {
             var dialogElement = document.getElementById(this.dialogId);
             var modalHeight = document.getElementById(this.modalId).offsetHeight;
             var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+            var viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
             var dialogHeight = dialogElement.offsetHeight;
+            var dialogWidth = dialogElement.offsetWidth;
             var scrollPosition = window.scrollY;
-            var topDialogDiv = scrollPosition + viewportHeight / 2 - dialogHeight / 2;
 
-            dialogElement.setAttribute('style', 'top:' + topDialogDiv + 'px');
-        }
+            // X & Y Coordinates
+            var x = viewportWidth / 2 - dialogWidth / 2;
+            var y = scrollPosition + viewportHeight / 2 - dialogHeight / 2;
 
-        /**
-         * Handles Animating Dialog In
-         * @private
-         */
-
-    }, {
-        key: "_animateIn",
-        value: function _animateIn() {
-
-            //document.getElementById(this.dialogId).className += " animated " + this.animation.in;
-            if (this.events.onopen) {
-                this.events.onopen();
-            }
+            dialogElement.style.top = y + 'px';
+            dialogElement.style.left = 'calc(50% - ' + dialogWidth / 2 + 'px)';
         }
 
         /**
@@ -288,12 +294,28 @@ module.exports = function () {
     }, {
         key: "_close",
         value: function _close() {
+            var _this3 = this;
+
             if (this.events.onclose) {
                 this.events.onclose();
             }
-            document.getElementById(this.dialogId).className += " animated " + this.animation.out;
-            this.modalObj.close();
+            this._setState('closed');
             this._dispose();
+
+            // Only close modal if there's no other dialogs using it
+            var modalHasChildDialogs = function modalHasChildDialogs() {
+                for (var key in window['FlowUI']._dialogs) {
+                    var dialog = window['FlowUI']._dialogs[key];
+                    if (dialog.modalId == _this3.modalId) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            if (!modalHasChildDialogs()) {
+                this.modalObj.close();
+            }
         }
 
         /**
@@ -305,8 +327,15 @@ module.exports = function () {
     }, {
         key: "_dispose",
         value: function _dispose() {
-            if (window.leanjs.dialogs[this.id]) {
-                delete window.leanjs.dialogs[this.id];
+            var _this4 = this;
+
+            // TO DO: Element from Remove from DOM
+            setTimeout(function () {
+                _this4.dialogElement.parentNode.removeChild(_this4.dialogElement);
+            }, 1000);
+
+            if (window['FlowUI']._dialogs[this.id]) {
+                delete window['FlowUI']._dialogs[this.id];
             }
             this._reactivatePreviousDiaog();
         }
@@ -319,12 +348,60 @@ module.exports = function () {
     }, {
         key: "_reactivatePreviousDiaog",
         value: function _reactivatePreviousDiaog() {
-            var allDialogs = window.leanjs.dialogs;
+            var allDialogs = window['FlowUI']._dialogs;
             var previousDialog = allDialogs[Object.keys(allDialogs)[Object.keys(allDialogs).length - 1]];
             if (previousDialog) {
                 setTimeout(function () {
                     previousDialog._focus();
                 }, 500);
+            }
+        }
+
+        /**
+         * Handle Dialog State Change (focus, inactive, dismissed)
+         * @param e
+         * @returns {string}
+         * @private
+         */
+
+    }, {
+        key: "_onStateChange",
+        value: function _onStateChange(e) {
+            var _this5 = this;
+
+            // Strip out any animation-in/out classes
+            var normalizeClasses = function normalizeClasses() {
+                var classes = document.getElementById(_this5.dialogId).className.trim().split(' ');
+                var normalized = [];
+                classes.forEach(function (className) {
+                    if (className != _this5.animation.in && className != _this5.animation.out && className != 'inactiveOut') {
+                        normalized.push(className);
+                    }
+                });
+                return normalized.join(' ');
+            };
+
+            var className = normalizeClasses();
+
+            document.getElementById(this.dialogId).setAttribute("state", e.detail.status);
+
+            switch (e.detail.status) {
+                case 'active':
+                    var animateInEffect = this.animation.in; // default
+                    document.getElementById(this.dialogId).className = "flowui-dialog animated " + animateInEffect;
+                    break;
+                case 'inactive':
+                    if (Object.keys(window['FlowUI']._dialogs).length > 1) {
+                        document.getElementById(this.dialogId).className = "flowui-dialog animated inactiveOut";
+                        break;
+                    }
+                    document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
+                    break;
+                case 'closed':
+                    document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
+                    break;
+                default:
+                // catch all
             }
         }
 
@@ -336,37 +413,9 @@ module.exports = function () {
     }, {
         key: "_setState",
         value: function _setState(state) {
-            var _this3 = this;
 
-            document.getElementById(this.dialogId).setAttribute("state", state);
-
-            // Strip out any animation classes
-            var normalizeClasses = function normalizeClasses() {
-                var classes = document.getElementById(_this3.dialogId).className;
-                var classArray = classes.split(' ');
-                classArray.splice(2, classArray.length);
-                return classArray.join(' ');
-            };
-
-            var className = normalizeClasses();
-
-            if (state == "active") {
-
-                var animateInEffect = this.animation.in; // default
-                if (Object.keys(window.leanjs.dialogs).length > 1) {
-                    animateInEffect = "";
-                }
-
-                document.getElementById(this.dialogId).className = className + " " + animateInEffect;
-            } else {
-
-                var animateOutEffect = this.animation.out; // default
-                if (Object.keys(window.leanjs.dialogs).length > 1) {
-                    animateOutEffect = "inactiveOut";
-                }
-
-                document.getElementById(this.dialogId).className = className + " " + animateOutEffect;
-            }
+            var event = new CustomEvent("stateChange", { detail: { status: state } });
+            this.dialogElement.dispatchEvent(event);
         }
 
         /**
@@ -381,7 +430,7 @@ module.exports = function () {
             var _this = this;
             this._setState("active");
 
-            var allDialogs = window.leanjs ? window.leanjs.dialogs : {};
+            var allDialogs = window['FlowUI'] ? window['FlowUI']._dialogs : {};
             for (var key in allDialogs) {
                 var dialog = allDialogs[key];
                 if (dialog.dialogId != _this.dialogId) {
@@ -398,14 +447,27 @@ module.exports = function () {
     }, {
         key: "_attachEvents",
         value: function _attachEvents() {
-            var _this4 = this;
+            var _this6 = this;
 
             // Allow user to hit escape to close window (unless overwritten by param)
             if (this.escapable) {
                 window.addEventListener("keyup", function (event) {
-                    _this4._close();
+                    _this6._close();
                 });
             }
+        }
+
+        /**
+         * Register for any event listeners
+         * @private
+         */
+
+    }, {
+        key: "_registerEventListeners",
+        value: function _registerEventListeners() {
+
+            // Listen for dialog state change event
+            this.dialogElement.addEventListener('stateChange', this._onStateChange.bind(this), false);
         }
     }, {
         key: "close",
@@ -639,16 +701,32 @@ module.exports = function () {
 		this.parent = props.parent ? _typeof(props.parent) === 'object' ? props.parent : document.querySelector(props.parent) : document.body;
 		this.className = props.className || "";
 		this.close = this._close;
+
 		this._render();
+		this._exportObjInstance();
 	}
 
 	/**
-  * Render Modal
+  * Save reference to instantiated modal to window
+  * so can access to object through DOM
   * @private
   */
 
 
 	_createClass(Modal, [{
+		key: '_exportObjInstance',
+		value: function _exportObjInstance() {
+			window['FlowUI'] = window['FlowUI'] || {};
+			window['FlowUI']._modals = window['FlowUI']._modals || {};
+			window['FlowUI']._modals[this.id] = this;
+		}
+
+		/**
+   * Render Modal
+   * @private
+   */
+
+	}, {
 		key: '_render',
 		value: function _render() {
 

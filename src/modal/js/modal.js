@@ -15,7 +15,21 @@ module.exports = class Modal {
 		this.parent = props.parent ? (typeof props.parent === 'object' ? props.parent : document.querySelector(props.parent)) : document.body;
 		this.className = props.className || "";
 		this.close  = this._close;
+
 		this._render();
+		this._exportObjInstance();
+	}
+
+
+	/**
+	 * Save reference to instantiated modal to window
+	 * so can access to object through DOM
+	 * @private
+	 */
+	_exportObjInstance() {
+		window['FlowUI'] = window['FlowUI'] || {};
+		window['FlowUI']._modals = window['FlowUI']._modals || {};
+		window['FlowUI']._modals[this.id] = this;
 	}
 
 

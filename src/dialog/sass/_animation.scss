@@ -161,6 +161,7 @@ $dialog-animation-delay: 0s;
   }
 
   to {
+    opacity:1;
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1);
   }
@@ -180,6 +181,7 @@ $dialog-animation-delay: 0s;
   }
 
   to {
+    opacity:1;
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1);
   }
@@ -240,18 +242,13 @@ $dialog-animation-delay: 0s;
 }
 
 
-// InactiveOut : Used when dialog is set to inactive state,
-// and new dialog has focus
-@keyframes inactiveOut {
-  from {
-    opacity: 1;
-  }
 
-  50% {
-    opacity: 0;
+@keyframes inactiveAnimate {
+  from {
+    opacity:1;
   }
-  100% {
-    -webkit-transform: scale3d(.9, .9, .9);
-    transform: scale3d(.9, .9, .9);
+  to {
+    opacity:1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
   }
 }
