@@ -26,6 +26,7 @@ module.exports = class Dialog {
      *  ]
      * }
      */
+    /* TO DO: Move classname, escapable, etc into an 'options' property */
     constructor({id, title, html, url, parent, className, escapable = true, animation = {}, events = {}, buttons = [], promise }) {
 
         // Arguments
@@ -362,12 +363,11 @@ module.exports = class Dialog {
 
         switch (e.detail.status) {
             case 'active':
-                let animateInEffect = this.animation.in; // default
-                document.getElementById(this.dialogId).className =  "flowui-dialog animated " + animateInEffect;
+                document.getElementById(this.dialogId).className =  "flowui-dialog animated " + this.animation.in;
                 break;
             case 'inactive':
                 if (Object.keys(window['FlowUI']._dialogs).length > 1) {
-                    document.getElementById(this.dialogId).className = "flowui-dialog animated inactiveOut";
+                    document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
                     break;
                 }
                 document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
