@@ -38,7 +38,7 @@ module.exports = class Dialog {
         this.url = url;
         this.promise = promise;
         this.parent = parent ? (typeof parent === 'object' ? parent : document.querySelector(parent)) : document.body;
-        this.className = className;
+        this.className = className || '';
         this.modalObj;
         this.loaderObj;
         this.buttons = buttons;
@@ -311,7 +311,12 @@ module.exports = class Dialog {
 
         // TO DO: Element from Remove from DOM
         setTimeout(()=> {
-            this.dialogElement.parentNode.removeChild(this.dialogElement);
+            try {
+                this.dialogElement.parentNode.removeChild(this.dialogElement);
+            }
+            catch (ex) {
+                // modal obj already removed
+            }
         }, 1000);
 
 
@@ -344,36 +349,27 @@ module.exports = class Dialog {
      */
     _onStateChange(e) {
 
-        // Strip out any animation-in/out classes
-        let normalizeClasses = () => {
-            let classes = document.getElementById(this.dialogId).className.trim().split(' ');
-            let normalized = [];
-            classes.forEach((className) => {
-                if (className != this.animation.in && className != this.animation.out && className != 'inactiveOut')
-            {
-                normalized.push(className);
-            }
-        });
-            return normalized.join(' ');
+        // Strip out any additional classes added after
+        let sanitizeClasses = () => {
+            const classes = "flowui-dialog animated " + this.className;
+            return classes;
         }
-
-        let className = normalizeClasses();
 
         document.getElementById(this.dialogId).setAttribute("state", e.detail.status);
 
         switch (e.detail.status) {
             case 'active':
-                document.getElementById(this.dialogId).className =  "flowui-dialog animated " + this.animation.in;
+                document.getElementById(this.dialogId).className =  sanitizeClasses() + ' ' + this.animation.in;
                 break;
             case 'inactive':
                 if (Object.keys(window['FlowUI']._dialogs).length > 1) {
-                    document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
+                    document.getElementById(this.dialogId).className =  sanitizeClasses() + ' ' + this.animation.out;
                     break;
                 }
-                document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
+                document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' +  this.animation.out;
                 break;
             case 'closed':
-                document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
+                document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' +  this.animation.out;
                 break;
             default:
                 // catch all

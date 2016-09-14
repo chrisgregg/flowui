@@ -62,7 +62,7 @@ module.exports = function () {
         this.url = url;
         this.promise = promise;
         this.parent = parent ? (typeof parent === "undefined" ? "undefined" : _typeof(parent)) === 'object' ? parent : document.querySelector(parent) : document.body;
-        this.className = className;
+        this.className = className || '';
         this.modalObj;
         this.loaderObj;
         this.buttons = buttons;
@@ -332,7 +332,11 @@ module.exports = function () {
 
             // TO DO: Element from Remove from DOM
             setTimeout(function () {
-                _this4.dialogElement.parentNode.removeChild(_this4.dialogElement);
+                try {
+                    _this4.dialogElement.parentNode.removeChild(_this4.dialogElement);
+                } catch (ex) {
+                    // modal obj already removed
+                }
             }, 1000);
 
             if (window['FlowUI']._dialogs[this.id]) {
@@ -370,35 +374,27 @@ module.exports = function () {
         value: function _onStateChange(e) {
             var _this5 = this;
 
-            // Strip out any animation-in/out classes
-            var normalizeClasses = function normalizeClasses() {
-                var classes = document.getElementById(_this5.dialogId).className.trim().split(' ');
-                var normalized = [];
-                classes.forEach(function (className) {
-                    if (className != _this5.animation.in && className != _this5.animation.out && className != 'inactiveOut') {
-                        normalized.push(className);
-                    }
-                });
-                return normalized.join(' ');
+            // Strip out any additional classes added after
+            var sanitizeClasses = function sanitizeClasses() {
+                var classes = "flowui-dialog animated " + _this5.className;
+                return classes;
             };
-
-            var className = normalizeClasses();
 
             document.getElementById(this.dialogId).setAttribute("state", e.detail.status);
 
             switch (e.detail.status) {
                 case 'active':
-                    document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.in;
+                    document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.animation.in;
                     break;
                 case 'inactive':
                     if (Object.keys(window['FlowUI']._dialogs).length > 1) {
-                        document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
+                        document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.animation.out;
                         break;
                     }
-                    document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
+                    document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.animation.out;
                     break;
                 case 'closed':
-                    document.getElementById(this.dialogId).className = "flowui-dialog animated " + this.animation.out;
+                    document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.animation.out;
                     break;
                 default:
                 // catch all
