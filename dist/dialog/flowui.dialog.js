@@ -109,27 +109,26 @@ module.exports = function () {
     }, {
         key: "_getContent",
         value: function _getContent() {
+            var _this2 = this;
 
             // If promise provided during instantiation, use promise object instead to get content
             if (this.promise) {
                 return this.promise;
             }
 
-            var _this = this;
-
             return new Promise(function (resolve, reject) {
 
                 // Static content provided as property
-                if (_this.html) {
-                    resolve(_this.html);
+                if (_this2.html) {
+                    resolve(_this2.html);
                 }
 
                 // Content from a partial or template retreived via http
-                else if (_this.url) {
+                else if (_this2.url) {
 
                         // Do the usual XHR stuff
                         var req = new XMLHttpRequest();
-                        req.open('GET', _this.url);
+                        req.open('GET', _this2.url);
 
                         req.onload = function () {
                             if (req.status == 200) {
@@ -157,7 +156,7 @@ module.exports = function () {
     }, {
         key: "_renderDialog",
         value: function _renderDialog() {
-            var _this2 = this;
+            var _this3 = this;
 
             this._renderModal();
 
@@ -181,7 +180,7 @@ module.exports = function () {
             var content = document.createElement('div');
             this._getContent().then(function (html) {
                 content.innerHTML = html;
-                _this2._centerVertically();
+                _this3._centerVertically();
             });
             content.setAttribute('class', 'inner-content');
             contentWrapper.appendChild(content);
@@ -198,7 +197,7 @@ module.exports = function () {
                     var buttonsWrapper = document.createElement('div');
                     buttonsWrapper.setAttribute('class', 'buttons');
                     var x = 0;
-                    _this2.buttons.forEach(function (button) {
+                    _this3.buttons.forEach(function (button) {
                         var buttonElement = document.createElement("a");
                         buttonElement.setAttribute('class', 'flowui-button button' + x++ + ' ' + (button.className || ''));
                         buttonElement.innerHTML = button.title;
@@ -222,12 +221,12 @@ module.exports = function () {
             this._getContent().then(function () {
 
                 // Hide Loader
-                if (_this2.loaderObj) {
-                    _this2.loaderObj.close(false);
+                if (_this3.loaderObj) {
+                    _this3.loaderObj.close(false);
                 }
 
-                _this2._centerVertically();
-                _this2._focus();
+                _this3._centerVertically();
+                _this3._focus();
             });
         }
 
@@ -264,7 +263,7 @@ module.exports = function () {
     }, {
         key: "_close",
         value: function _close() {
-            var _this3 = this;
+            var _this4 = this;
 
             if (this.options.events.onclose) {
                 this.options.events.onclose();
@@ -276,7 +275,7 @@ module.exports = function () {
             var modalHasChildDialogs = function modalHasChildDialogs() {
                 for (var key in window['FlowUI']._dialogs) {
                     var dialog = window['FlowUI']._dialogs[key];
-                    if (dialog.modalId == _this3.modalId) {
+                    if (dialog.modalId == _this4.modalId) {
                         return true;
                     }
                 }
@@ -297,12 +296,12 @@ module.exports = function () {
     }, {
         key: "_dispose",
         value: function _dispose() {
-            var _this4 = this;
+            var _this5 = this;
 
             // TO DO: Element from Remove from DOM
             setTimeout(function () {
                 try {
-                    _this4.dialogElement.parentNode.removeChild(_this4.dialogElement);
+                    _this5.dialogElement.parentNode.removeChild(_this5.dialogElement);
                 } catch (ex) {
                     // modal obj already removed
                 }
@@ -341,11 +340,11 @@ module.exports = function () {
     }, {
         key: "_onStateChange",
         value: function _onStateChange(e) {
-            var _this5 = this;
+            var _this6 = this;
 
             // Strip out any additional classes added after
             var sanitizeClasses = function sanitizeClasses() {
-                var classes = "flowui-dialog animated " + _this5.options.className;
+                var classes = "flowui-dialog animated " + _this6.options.className;
                 return classes;
             };
 
@@ -412,12 +411,12 @@ module.exports = function () {
     }, {
         key: "_attachEvents",
         value: function _attachEvents() {
-            var _this6 = this;
+            var _this7 = this;
 
             // Allow user to hit escape to close window (unless overwritten by param)
             if (this.options.escapable) {
                 window.addEventListener("keyup", function (event) {
-                    _this6._close();
+                    _this7._close();
                 });
             }
         }

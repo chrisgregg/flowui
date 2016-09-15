@@ -105,21 +105,19 @@ module.exports = class Dialog {
             return this.promise;
         }
 
-        let _this = this;
-
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
 
             // Static content provided as property
-            if (_this.html) {
-                resolve(_this.html);
+            if (this.html) {
+                resolve(this.html);
             }
 
             // Content from a partial or template retreived via http
-            else if (_this.url) {
+            else if (this.url) {
 
                 // Do the usual XHR stuff
                 var req = new XMLHttpRequest();
-                req.open('GET', _this.url);
+                req.open('GET', this.url);
 
                 req.onload = function() {
                     if (req.status == 200) {
