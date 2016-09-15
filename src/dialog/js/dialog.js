@@ -10,52 +10,29 @@ module.exports = class Dialog {
      *  html: Html to inject
      *  url: URL to inject content from
      *  promise: Promise object to get content from
-     *  className: CSS class to add to element
-     *  parent: Element to inject modal (as query expression)
-     *  escapable: True to allow user to close via escape button (default)
-     *  animation: {
-     *   in: "fadeIn" | "pulseIn" | "zoomIn"
-     *   out: "fadeOut" | "pulseOut" | "zooOut"
-     *  }
-     *  events: {
-     *   onopen: function,
-     *   onclose: function
-     *  }
-     *  buttons: [
-     *      { title: "Button Title", onclick: function }
-     *  ]
-     * }
+     *  buttons ({title: '', onclick: function}): Array of buttons to render
+     *  options (ModalOptions): Customization options
      */
-    /* TO DO: Move classname, escapable, etc into an 'options' property */
-    constructor({id, title, html, url, parent, className, escapable = true, animation = {}, events = {}, buttons = [], promise }) {
+
+    constructor({id, title, html, url, promise, buttons = [], options = {}}) {
 
         // Arguments
         this.id = (id || new Date().getTime());
-        this.dialogId = "dialog-" + this.id;	// ID for Dialog Element
-        this.modalId = "modal-" + this.id;	// Generated ID for parent Modal
         this.title = title;
         this.html = html;
         this.url = url;
         this.promise = promise;
-        this.parent = parent ? (typeof parent === 'object' ? parent : document.querySelector(parent)) : document.body;
-        this.className = className || '';
-        this.modalObj;
-        this.loaderObj;
         this.buttons = buttons;
-        this.escapable = escapable;
 
-        this.animation = {
-            in: animation.in || "fadeIn",
-            out: animation.out || "fadeOut"
-        };
-
-        this.events = {
-            onopen: events.onopen,
-            onclose: events.onclose
-        };
+        this.options = new ModalOptions(options);
 
         // Public Properties
+        this.dialogId = "dialog-" + this.id;	// ID for Dialog Element
+        this.modalId = "modal-" + this.id;	// Generated ID for parent Modal
+        this.modalObj;
+        this.loaderObj;
         this.dialogElement = null;
+        this.parent = document.body;
 
 
         this._renderDialog();
@@ -176,7 +153,7 @@ module.exports = class Dialog {
         // Render Container
         let container = document.createElement("div");
         container.setAttribute('id', this.dialogId);
-        container.setAttribute('class', 'flowui-dialog animated ' + (this.className ? this.className : ''));
+        container.setAttribute('class', 'flowui-dialog animated ' + (this.options.className ? this.options.className : ''));
         //container.style.display = "none";
 
         // Render Content Wrapper
@@ -275,8 +252,8 @@ module.exports = class Dialog {
      */
     _close() {
 
-        if (this.events.onclose) {
-            this.events.onclose();
+        if (this.options.events.onclose) {
+            this.options.events.onclose();
         }
         this._setState('closed');
         this._dispose();
@@ -351,7 +328,7 @@ module.exports = class Dialog {
 
         // Strip out any additional classes added after
         let sanitizeClasses = () => {
-            const classes = "flowui-dialog animated " + this.className;
+            const classes = "flowui-dialog animated " + this.options.className;
             return classes;
         }
 
@@ -359,17 +336,17 @@ module.exports = class Dialog {
 
         switch (e.detail.status) {
             case 'active':
-                document.getElementById(this.dialogId).className =  sanitizeClasses() + ' ' + this.animation.in;
+                document.getElementById(this.dialogId).className =  sanitizeClasses() + ' ' + this.options.animation.in;
                 break;
             case 'inactive':
                 if (Object.keys(window['FlowUI']._dialogs).length > 1) {
-                    document.getElementById(this.dialogId).className =  sanitizeClasses() + ' ' + this.animation.out;
+                    document.getElementById(this.dialogId).className =  sanitizeClasses() + ' ' + this.options.animation.out;
                     break;
                 }
-                document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' +  this.animation.out;
+                document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' +  this.options.animation.out;
                 break;
             case 'closed':
-                document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' +  this.animation.out;
+                document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' +  this.options.animation.out;
                 break;
             default:
                 // catch all
@@ -416,7 +393,7 @@ module.exports = class Dialog {
     _attachEvents() {
 
         // Allow user to hit escape to close window (unless overwritten by param)
-        if (this.escapable) {
+        if (this.options.escapable) {
             window.addEventListener("keyup", (event) => {
                 this._close();
             });
@@ -436,6 +413,27 @@ module.exports = class Dialog {
 
     }
 
+
+}
+
+/**
+ * Options to customize Modal
+ */
+class ModalOptions {
+
+    constructor({className, escapable = true, animation = {}, events = {} }) {
+
+            this.className = className || '';
+            this.escapable = escapable;
+            this.animation =  {
+                in: animation.in || 'pulseIn',
+                our: animation.out || 'pulseOut'
+            },
+            this.events = {
+                onopen: events.onopen || null,
+                onclose: events.onclose || null
+            }
+    }
 
 }
 

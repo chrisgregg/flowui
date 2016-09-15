@@ -1,8 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.FlowUI = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -17,69 +15,40 @@ module.exports = function () {
      *  html: Html to inject
      *  url: URL to inject content from
      *  promise: Promise object to get content from
-     *  className: CSS class to add to element
-     *  parent: Element to inject modal (as query expression)
-     *  escapable: True to allow user to close via escape button (default)
-     *  animation: {
-     *   in: "fadeIn" | "pulseIn" | "zoomIn"
-     *   out: "fadeOut" | "pulseOut" | "zooOut"
-     *  }
-     *  events: {
-     *   onopen: function,
-     *   onclose: function
-     *  }
-     *  buttons: [
-     *      { title: "Button Title", onclick: function }
-     *  ]
-     * }
+     *  buttons ({title: '', onclick: function}): Array of buttons to render
+     *  options (ModalOptions): Customization options
      */
-    /* TO DO: Move classname, escapable, etc into an 'options' property */
+
     function Dialog(_ref) {
         var id = _ref.id;
         var title = _ref.title;
         var html = _ref.html;
         var url = _ref.url;
-        var parent = _ref.parent;
-        var className = _ref.className;
-        var _ref$escapable = _ref.escapable;
-        var escapable = _ref$escapable === undefined ? true : _ref$escapable;
-        var _ref$animation = _ref.animation;
-        var animation = _ref$animation === undefined ? {} : _ref$animation;
-        var _ref$events = _ref.events;
-        var events = _ref$events === undefined ? {} : _ref$events;
+        var promise = _ref.promise;
         var _ref$buttons = _ref.buttons;
         var buttons = _ref$buttons === undefined ? [] : _ref$buttons;
-        var promise = _ref.promise;
+        var _ref$options = _ref.options;
+        var options = _ref$options === undefined ? {} : _ref$options;
 
         _classCallCheck(this, Dialog);
 
         // Arguments
         this.id = id || new Date().getTime();
-        this.dialogId = "dialog-" + this.id; // ID for Dialog Element
-        this.modalId = "modal-" + this.id; // Generated ID for parent Modal
         this.title = title;
         this.html = html;
         this.url = url;
         this.promise = promise;
-        this.parent = parent ? (typeof parent === "undefined" ? "undefined" : _typeof(parent)) === 'object' ? parent : document.querySelector(parent) : document.body;
-        this.className = className || '';
-        this.modalObj;
-        this.loaderObj;
         this.buttons = buttons;
-        this.escapable = escapable;
 
-        this.animation = {
-            in: animation.in || "fadeIn",
-            out: animation.out || "fadeOut"
-        };
-
-        this.events = {
-            onopen: events.onopen,
-            onclose: events.onclose
-        };
+        this.options = new ModalOptions(options);
 
         // Public Properties
+        this.dialogId = "dialog-" + this.id; // ID for Dialog Element
+        this.modalId = "modal-" + this.id; // Generated ID for parent Modal
+        this.modalObj;
+        this.loaderObj;
         this.dialogElement = null;
+        this.parent = document.body;
 
         this._renderDialog();
         this._attachEvents();
@@ -195,7 +164,7 @@ module.exports = function () {
             // Render Container
             var container = document.createElement("div");
             container.setAttribute('id', this.dialogId);
-            container.setAttribute('class', 'flowui-dialog animated ' + (this.className ? this.className : ''));
+            container.setAttribute('class', 'flowui-dialog animated ' + (this.options.className ? this.options.className : ''));
             //container.style.display = "none";
 
             // Render Content Wrapper
@@ -297,8 +266,8 @@ module.exports = function () {
         value: function _close() {
             var _this3 = this;
 
-            if (this.events.onclose) {
-                this.events.onclose();
+            if (this.options.events.onclose) {
+                this.options.events.onclose();
             }
             this._setState('closed');
             this._dispose();
@@ -376,7 +345,7 @@ module.exports = function () {
 
             // Strip out any additional classes added after
             var sanitizeClasses = function sanitizeClasses() {
-                var classes = "flowui-dialog animated " + _this5.className;
+                var classes = "flowui-dialog animated " + _this5.options.className;
                 return classes;
             };
 
@@ -384,17 +353,17 @@ module.exports = function () {
 
             switch (e.detail.status) {
                 case 'active':
-                    document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.animation.in;
+                    document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.options.animation.in;
                     break;
                 case 'inactive':
                     if (Object.keys(window['FlowUI']._dialogs).length > 1) {
-                        document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.animation.out;
+                        document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.options.animation.out;
                         break;
                     }
-                    document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.animation.out;
+                    document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.options.animation.out;
                     break;
                 case 'closed':
-                    document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.animation.out;
+                    document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' + this.options.animation.out;
                     break;
                 default:
                 // catch all
@@ -446,7 +415,7 @@ module.exports = function () {
             var _this6 = this;
 
             // Allow user to hit escape to close window (unless overwritten by param)
-            if (this.escapable) {
+            if (this.options.escapable) {
                 window.addEventListener("keyup", function (event) {
                     _this6._close();
                 });
@@ -479,6 +448,32 @@ module.exports = function () {
 
     return Dialog;
 }();
+
+/**
+ * Options to customize Modal
+ */
+
+var ModalOptions = function ModalOptions(_ref2) {
+    var className = _ref2.className;
+    var _ref2$escapable = _ref2.escapable;
+    var escapable = _ref2$escapable === undefined ? true : _ref2$escapable;
+    var _ref2$animation = _ref2.animation;
+    var animation = _ref2$animation === undefined ? {} : _ref2$animation;
+    var _ref2$events = _ref2.events;
+    var events = _ref2$events === undefined ? {} : _ref2$events;
+
+    _classCallCheck(this, ModalOptions);
+
+    this.className = className || '';
+    this.escapable = escapable;
+    this.animation = {
+        in: animation.in || 'pulseIn',
+        our: animation.out || 'pulseOut'
+    }, this.events = {
+        onopen: events.onopen || null,
+        onclose: events.onclose || null
+    };
+};
 
 },{}],2:[function(require,module,exports){
 'use strict';
