@@ -159,6 +159,7 @@ module.exports = function () {
             var _this3 = this;
 
             this._renderModal();
+            var contentPromise = this._getContent();
 
             // Render Container
             var container = document.createElement("div");
@@ -178,7 +179,7 @@ module.exports = function () {
 
             // Render Inner Content
             var content = document.createElement('div');
-            this._getContent().then(function (html) {
+            contentPromise.then(function (html) {
                 content.innerHTML = html;
                 _this3._centerVertically();
             });
@@ -218,7 +219,7 @@ module.exports = function () {
             this.dialogElement = container;
 
             // Once content loaded, display
-            this._getContent().then(function () {
+            contentPromise.then(function () {
 
                 // Hide Loader
                 if (_this3.loaderObj) {

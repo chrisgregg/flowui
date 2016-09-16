@@ -147,6 +147,7 @@ module.exports = class Dialog {
     _renderDialog() {
 
         this._renderModal();
+        let contentPromise = this._getContent();
 
         // Render Container
         let container = document.createElement("div");
@@ -166,7 +167,7 @@ module.exports = class Dialog {
 
         // Render Inner Content
         let content = document.createElement('div');
-        this._getContent().then((html) => {
+        contentPromise.then((html) => {
             content.innerHTML = html;
             this._centerVertically();
         });
@@ -204,7 +205,7 @@ module.exports = class Dialog {
         this.dialogElement = container;
 
         // Once content loaded, display
-        this._getContent().then(() => {
+        contentPromise.then(() => {
 
             // Hide Loader
             if (this.loaderObj) {
