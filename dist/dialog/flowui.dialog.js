@@ -68,6 +68,9 @@ module.exports = function () {
             window['FlowUI'] = window['FlowUI'] || {};
             window['FlowUI']._dialogs = window['FlowUI']._dialogs || {};
             window['FlowUI']._dialogs[this.id] = this;
+
+            // Attach a reference to parent modal
+            this.modalObj.children[this.id] = this;
         }
 
         /**
@@ -199,9 +202,10 @@ module.exports = function () {
                     var x = 0;
                     _this3.buttons.forEach(function (button) {
                         var buttonElement = document.createElement("a");
-                        buttonElement.setAttribute('class', 'flowui-button button' + x++ + ' ' + (button.className || ''));
+                        buttonElement.setAttribute('class', 'flowui-button ' + x++ + ' ' + (button.className || ''));
                         buttonElement.innerHTML = button.title;
                         buttonElement.onclick = button.onclick;
+                        buttonElement.href = button.href || 'javascript:;';
                         buttonsWrapper.appendChild(buttonElement);
                     });
                     contentWrapper.appendChild(buttonsWrapper);
@@ -307,9 +311,8 @@ module.exports = function () {
                 }
             }, 1000);
 
-            if (window['FlowUI']._dialogs[this.id]) {
-                delete window['FlowUI']._dialogs[this.id];
-            }
+            delete window['FlowUI']._dialogs[this.id];
+
             this._reactivatePreviousDiaog();
         }
 
@@ -439,6 +442,11 @@ module.exports = function () {
             return this._close;
         }
     }, {
+        key: "dispose",
+        get: function get() {
+            return this._dispose;
+        }
+    }, {
         key: "centerVertically",
         get: function get() {
             return this._centerVertically;
@@ -516,30 +524,48 @@ module.exports = function () {
 
         _classCallCheck(this, Loader);
 
-        this.loaderId = props.id || "loader-" + new Date().getTime();
+        this.id = props.id || "loader-" + new Date().getTime();
         this.modalId = props.modalId || "loader-modal-" + new Date().getTime(); // Generated ID for parent Modal
         this.parent = props.parent ? _typeof(props.parent) === 'object' ? props.parent : document.querySelector(props.parent) : document.body;
         this.modalObj;
 
         this._render();
+        this._exportObjInstance();
     }
 
     _createClass(Loader, [{
-        key: "_render",
+        key: "_exportObjInstance",
 
+
+        /**
+         * Save reference to instantiated modal to window
+         * so can access to object through DOM
+         * @private
+         */
+        value: function _exportObjInstance() {
+            window['FlowUI'] = window['FlowUI'] || {};
+            window['FlowUI']._loaders = window['FlowUI']._loaders || {};
+            window['FlowUI']._loaders[this.id] = this;
+
+            // Attach a reference to parent modal
+            this.modalObj.children[this.id] = this;
+        }
 
         /**
          *
          * @private
          */
+
+    }, {
+        key: "_render",
         value: function _render() {
 
             this._renderModal();
 
             // Check that element doesn't already exist
-            if (!document.getElementById(this.loaderId)) {
+            if (!document.getElementById(this.id)) {
                 var container = document.createElement("div");
-                container.id = this.loaderId;
+                container.id = this.id;
                 container.className = "flowui-loader";
 
                 var loaderElement = document.createElement("div");
@@ -576,7 +602,7 @@ module.exports = function () {
         key: "_centerVertically",
         value: function _centerVertically() {
 
-            var loaderElement = document.getElementById(this.loaderId);
+            var loaderElement = document.getElementById(this.id);
             var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
             var parentHeight = Math.max(this.parent.clientHeight, this.parent.innerHeight || 0);
             var loaderHeight = loaderElement.offsetHeight;
@@ -612,8 +638,8 @@ module.exports = function () {
             var _this = this;
 
             setTimeout(function () {
-                document.getElementById(_this.loaderId).className += " animated zoomInLoader";
-                document.getElementById(_this.loaderId).style.display = "";
+                document.getElementById(_this.id).className += " animated zoomInLoader";
+                document.getElementById(_this.id).style.display = "";
             }, 400);
         }
 
@@ -625,7 +651,7 @@ module.exports = function () {
     }, {
         key: "_animateOut",
         value: function _animateOut() {
-            document.getElementById(this.loaderId).className += " zoomOutLoader";
+            document.getElementById(this.id).className += " zoomOutLoader";
         }
 
         /**
@@ -646,19 +672,25 @@ module.exports = function () {
         }
 
         /**
-         * Remove from DOM and remove object
+         * Remove object reference from dom
          * @private
          */
 
     }, {
         key: "_dispose",
         value: function _dispose() {
-            delete this;
+
+            delete window.FlowUI['_loaders'][this.id];
         }
     }, {
         key: "close",
         get: function get() {
             return this._close;
+        }
+    }, {
+        key: "dispose",
+        get: function get() {
+            return this._dispose;
         }
     }]);
 
@@ -690,21 +722,21 @@ module.exports = function () {
 		this.id = props.id || "modal-" + new Date().getTime();
 		this.parent = props.parent ? _typeof(props.parent) === 'object' ? props.parent : document.querySelector(props.parent) : document.body;
 		this.className = props.className || "";
-		this.close = this._close;
+		this.children = {}; // associative array of child elements using this modal
 
 		this._render();
 		this._exportObjInstance();
 	}
 
-	/**
-  * Save reference to instantiated modal to window
-  * so can access to object through DOM
-  * @private
-  */
-
-
 	_createClass(Modal, [{
 		key: '_exportObjInstance',
+
+
+		/**
+   * Save reference to instantiated modal to window
+   * so can access to object through DOM
+   * @private
+   */
 		value: function _exportObjInstance() {
 			window['FlowUI'] = window['FlowUI'] || {};
 			window['FlowUI']._modals = window['FlowUI']._modals || {};
@@ -748,6 +780,26 @@ module.exports = function () {
 				modalElement.parentNode.removeChild(modalElement);
 				_this.parent.className = _this.parent.className.replace('flowui-modal-parent', '');
 			}, 1000);
+
+			this._dispose();
+		}
+
+		// Remove object references
+
+	}, {
+		key: '_dispose',
+		value: function _dispose() {
+
+			// Delete any child object references (UI elements using this modal obj)
+			for (var key in this.children) {
+				this.children[key].dispose();
+			}
+			delete window['FlowUI']._modals[this.id];
+		}
+	}, {
+		key: 'close',
+		get: function get() {
+			return this._close;
 		}
 	}]);
 

@@ -47,6 +47,10 @@ module.exports = class Dialog {
         return this._close;
     }
 
+    get dispose() {
+        return this._dispose;
+    }
+
     get centerVertically() {
         return this._centerVertically;
     }
@@ -61,6 +65,10 @@ module.exports = class Dialog {
         window['FlowUI'] = window['FlowUI'] || {};
         window['FlowUI']._dialogs = window['FlowUI']._dialogs || {};
         window['FlowUI']._dialogs[this.id] = this;
+
+        // Attach a reference to parent modal
+        this.modalObj.children[this.id] = this;
+
     }
 
 
@@ -187,9 +195,10 @@ module.exports = class Dialog {
             let x = 0;
             this.buttons.forEach(function(button) {
                 let buttonElement = document.createElement("a");
-                buttonElement.setAttribute('class', 'flowui-button button' + x++ + ' ' + (button.className || ''));
+                buttonElement.setAttribute('class', 'flowui-button ' + x++ + ' ' + (button.className || ''));
                 buttonElement.innerHTML = button.title;
                 buttonElement.onclick = button.onclick;
+                buttonElement.href = button.href || 'javascript:;';
                 buttonsWrapper.appendChild(buttonElement);
             });
             contentWrapper.appendChild(buttonsWrapper);
@@ -296,9 +305,9 @@ module.exports = class Dialog {
         }, 1000);
 
 
-        if (window['FlowUI']._dialogs[this.id]) {
-            delete window['FlowUI']._dialogs[this.id];
-        }
+
+        delete window['FlowUI']._dialogs[this.id];
+
         this._reactivatePreviousDiaog();
     }
 

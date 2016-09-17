@@ -32,21 +32,21 @@ module.exports = function () {
 		this.id = props.id || "modal-" + new Date().getTime();
 		this.parent = props.parent ? _typeof(props.parent) === 'object' ? props.parent : document.querySelector(props.parent) : document.body;
 		this.className = props.className || "";
-		this.close = this._close;
+		this.children = {}; // associative array of child elements using this modal
 
 		this._render();
 		this._exportObjInstance();
 	}
 
-	/**
-  * Save reference to instantiated modal to window
-  * so can access to object through DOM
-  * @private
-  */
-
-
 	_createClass(Modal, [{
 		key: '_exportObjInstance',
+
+
+		/**
+   * Save reference to instantiated modal to window
+   * so can access to object through DOM
+   * @private
+   */
 		value: function _exportObjInstance() {
 			window['FlowUI'] = window['FlowUI'] || {};
 			window['FlowUI']._modals = window['FlowUI']._modals || {};
@@ -90,6 +90,26 @@ module.exports = function () {
 				modalElement.parentNode.removeChild(modalElement);
 				_this.parent.className = _this.parent.className.replace('flowui-modal-parent', '');
 			}, 1000);
+
+			this._dispose();
+		}
+
+		// Remove object references
+
+	}, {
+		key: '_dispose',
+		value: function _dispose() {
+
+			// Delete any child object references (UI elements using this modal obj)
+			for (var key in this.children) {
+				this.children[key].dispose();
+			}
+			delete window['FlowUI']._modals[this.id];
+		}
+	}, {
+		key: 'close',
+		get: function get() {
+			return this._close;
 		}
 	}]);
 

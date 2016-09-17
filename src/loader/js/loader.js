@@ -12,12 +12,13 @@ module.exports = class Loader {
      */
     constructor(props = {}) {
 
-        this.loaderId = props.id || "loader-" + new Date().getTime();
+        this.id = props.id || "loader-" + new Date().getTime();
         this.modalId = props.modalId || "loader-modal-" + new Date().getTime(); // Generated ID for parent Modal
         this.parent = props.parent ? (typeof props.parent === 'object' ? props.parent : document.querySelector(props.parent)) : document.body;
         this.modalObj;
 
         this._render();
+        this._exportObjInstance();
 
     }
 
@@ -25,6 +26,27 @@ module.exports = class Loader {
     get close() {
         return this._close;
     }
+
+    get dispose() {
+        return this._dispose;
+    }
+
+    /**
+     * Save reference to instantiated modal to window
+     * so can access to object through DOM
+     * @private
+     */
+    _exportObjInstance() {
+        window['FlowUI'] = window['FlowUI'] || {};
+        window['FlowUI']._loaders = window['FlowUI']._loaders || {};
+        window['FlowUI']._loaders[this.id] = this;
+
+        // Attach a reference to parent modal
+        this.modalObj.children[this.id] = this;
+
+
+    }
+
 
 
     /**
@@ -36,9 +58,9 @@ module.exports = class Loader {
         this._renderModal();
 
         // Check that element doesn't already exist
-        if (!document.getElementById(this.loaderId)) {
+        if (!document.getElementById(this.id)) {
             let container = document.createElement("div");
-            container.id = this.loaderId;
+            container.id = this.id;
             container.className = "flowui-loader";
 
             let loaderElement = document.createElement("div");
@@ -71,7 +93,7 @@ module.exports = class Loader {
      */
     _centerVertically() {
 
-        let loaderElement = document.getElementById(this.loaderId);
+        let loaderElement = document.getElementById(this.id);
         const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         const parentHeight = Math.max(this.parent.clientHeight, this.parent.innerHeight || 0);
         const loaderHeight = loaderElement.offsetHeight;
@@ -105,8 +127,8 @@ module.exports = class Loader {
     _animateIn() {
 
         setTimeout(() => {
-            document.getElementById(this.loaderId).className += " animated zoomInLoader";
-            document.getElementById(this.loaderId).style.display = "";
+            document.getElementById(this.id).className += " animated zoomInLoader";
+            document.getElementById(this.id).style.display = "";
         }, 400);
 
     }
@@ -116,7 +138,7 @@ module.exports = class Loader {
      * @private
      */
     _animateOut() {
-        document.getElementById(this.loaderId).className += " zoomOutLoader";
+        document.getElementById(this.id).className += " zoomOutLoader";
     }
 
 
@@ -135,11 +157,13 @@ module.exports = class Loader {
 
 
     /**
-     * Remove from DOM and remove object
+     * Remove object reference from dom
      * @private
      */
     _dispose() {
-        delete this;
+
+        delete window.FlowUI['_loaders'][this.id];
+
     }
 
 
