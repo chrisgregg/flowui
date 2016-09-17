@@ -10,11 +10,11 @@ module.exports = class Dialog {
      *  html: Html to inject
      *  url: URL to inject content from
      *  promise: Promise object to get content from
-     *  buttons ({title: '', onclick: function}): Array of buttons to render
+     *  buttons ([{title: '', onclick: function}]): Array of buttons to render
      *  options (ModalOptions): Customization options
      */
 
-    constructor({id, title, html, url, promise, buttons = [], options = {}}) {
+    constructor({id, title, html, url, promise, buttons, options = {}}) {
 
         // Arguments
         this.id = (id || new Date().getTime());
@@ -181,7 +181,7 @@ module.exports = class Dialog {
         contentWrapper.appendChild(closeButtonElement);
 
         // Render Buttons
-        if (this.buttons) {
+        if (this.buttons && this.buttons.length > 0) {
             let buttonsWrapper = document.createElement('div');
             buttonsWrapper.setAttribute('class', 'buttons');
             let x = 0;

@@ -15,7 +15,7 @@ module.exports = function () {
      *  html: Html to inject
      *  url: URL to inject content from
      *  promise: Promise object to get content from
-     *  buttons ({title: '', onclick: function}): Array of buttons to render
+     *  buttons ([{title: '', onclick: function}]): Array of buttons to render
      *  options (ModalOptions): Customization options
      */
 
@@ -25,8 +25,7 @@ module.exports = function () {
         var html = _ref.html;
         var url = _ref.url;
         var promise = _ref.promise;
-        var _ref$buttons = _ref.buttons;
-        var buttons = _ref$buttons === undefined ? [] : _ref$buttons;
+        var buttons = _ref.buttons;
         var _ref$options = _ref.options;
         var options = _ref$options === undefined ? {} : _ref$options;
 
@@ -193,7 +192,7 @@ module.exports = function () {
             contentWrapper.appendChild(closeButtonElement);
 
             // Render Buttons
-            if (this.buttons) {
+            if (this.buttons && this.buttons.length > 0) {
                 (function () {
                     var buttonsWrapper = document.createElement('div');
                     buttonsWrapper.setAttribute('class', 'buttons');
