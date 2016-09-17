@@ -426,7 +426,7 @@ class ModalOptions {
             this.escapable = escapable;
             this.animation =  {
                 in: animation.in || 'pulseIn',
-                our: animation.out || 'pulseOut'
+                out: animation.out || 'pulseOut'
             },
             this.events = {
                 onopen: events.onopen || null,
