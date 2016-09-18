@@ -11,24 +11,23 @@ module.exports = class Dialog {
      *  url: URL to inject content from
      *  promise: Promise object to get content from
      *  buttons ([{title: '', onclick: function}]): Array of buttons to render
-     *  options (ModalOptions): Customization options
+     *  options (DialogOption): Customization options
      */
 
     constructor({id, title, html, url, promise, buttons, options = {}}) {
 
         // Arguments
-        this.id = (id || new Date().getTime());
+        this.id = (id || "dialog-" + new Date().getTime());
         this.title = title;
         this.html = html;
         this.url = url;
         this.promise = promise;
         this.buttons = buttons;
 
-        this.options = new ModalOptions(options);
+        this.options = new DialogOptions(options);
 
         // Public Properties
-        this.dialogId = "dialog-" + this.id;	// ID for Dialog Element
-        this.modalId = "modal-" + this.id;	// Generated ID for parent Modal
+        this.type = "dialog";
         this.modalObj;
         this.loaderObj;
         this.dialogElement = null;
@@ -82,20 +81,17 @@ module.exports = class Dialog {
         const existingModal = this.parent.getElementsByClassName('flowui-modal')[0];
         if (existingModal) {
             this.modalObj = window['FlowUI']._modals[existingModal.id];
-            this.modalId = existingModal.id;
         }
         // Otherwise, create new instance
         else {
-            this.modalObj = new window['FlowUI'].Modal({
-                id: this.modalId
-            });
+            this.modalObj = new window['FlowUI'].Modal();
         }
 
 
         // If dialog content requires http request, show loader before rendering
         if (this.url || this.promise) {
             this.loaderObj = new window['FlowUI'].Loader({
-                modalId: this.modalId
+                modalId: this.modalObj.id
             });
         }
 
@@ -159,7 +155,7 @@ module.exports = class Dialog {
 
         // Render Container
         let container = document.createElement("div");
-        container.setAttribute('id', this.dialogId);
+        container.setAttribute('id', this.id);
         container.setAttribute('class', 'flowui-dialog animated ' + (this.options.className ? this.options.className : ''));
         //container.style.display = "none";
 
@@ -210,7 +206,7 @@ module.exports = class Dialog {
         let modalElement = document.getElementById(this.modalObj.id);
         modalElement.appendChild(container);
 
-        // Store dialog element to global property
+        // Store dialog element to class property
         this.dialogElement = container;
 
         // Once content loaded, display
@@ -234,8 +230,7 @@ module.exports = class Dialog {
      */
     _centerVertically() {
 
-        let dialogElement = document.getElementById(this.dialogId);
-        const modalHeight = document.getElementById(this.modalId).offsetHeight;
+        let dialogElement = document.getElementById(this.id);
         const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         const viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
         const dialogHeight = dialogElement.offsetHeight;
@@ -269,13 +264,15 @@ module.exports = class Dialog {
         // Only close modal if there's no other dialogs using it
         const modalHasChildDialogs = () =>
         {
-            for (const key in window['FlowUI']._dialogs) {
-                let dialog = window['FlowUI']._dialogs[key];
-                if (dialog.modalId == this.modalId) {
-                    return true;
+            var childDialogs = [];
+            for (var key in this.modalObj.children) {
+                var flowObject = this.modalObj.children[key];
+                if (flowObject.type === 'dialog') {
+                    childDialogs.push(flowObject);
                 }
             }
-            return false;
+            return childDialogs.length > 1;
+
         }
 
         if (!modalHasChildDialogs()) {
@@ -303,8 +300,6 @@ module.exports = class Dialog {
                 // modal obj already removed
             }
         }, 1000);
-
-
 
         delete window['FlowUI']._dialogs[this.id];
 
@@ -340,21 +335,21 @@ module.exports = class Dialog {
             return classes;
         }
 
-        document.getElementById(this.dialogId).setAttribute("state", e.detail.status);
+        document.getElementById(this.id).setAttribute("state", e.detail.status);
 
         switch (e.detail.status) {
             case 'active':
-                document.getElementById(this.dialogId).className =  sanitizeClasses() + ' ' + this.options.animation.in;
+                document.getElementById(this.id).className =  sanitizeClasses() + ' ' + this.options.animation.in;
                 break;
             case 'inactive':
                 if (Object.keys(window['FlowUI']._dialogs).length > 1) {
-                    document.getElementById(this.dialogId).className =  sanitizeClasses() + ' ' + this.options.animation.out;
+                    document.getElementById(this.id).className =  sanitizeClasses() + ' ' + this.options.animation.out;
                     break;
                 }
-                document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' +  this.options.animation.out;
+                document.getElementById(this.id).className = sanitizeClasses() + ' ' +  this.options.animation.out;
                 break;
             case 'closed':
-                document.getElementById(this.dialogId).className = sanitizeClasses() + ' ' +  this.options.animation.out;
+                document.getElementById(this.id).className = sanitizeClasses() + ' ' +  this.options.animation.out;
                 break;
             default:
                 // catch all
@@ -388,7 +383,7 @@ module.exports = class Dialog {
         let allDialogs = window['FlowUI'] ? window['FlowUI']._dialogs : {};
         for (var key in allDialogs) {
             var dialog = allDialogs[key];
-            if (dialog.dialogId != _this.dialogId) {
+            if (dialog.id != _this.id) {
                 dialog._setState("inactive");
             }
         }
@@ -425,9 +420,9 @@ module.exports = class Dialog {
 }
 
 /**
- * Options to customize Modal
+ * Options to customize Dialog
  */
-class ModalOptions {
+class DialogOptions {
 
     constructor({className, escapable = true, animation = {}, events = {} }) {
 

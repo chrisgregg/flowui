@@ -17,6 +17,8 @@ module.exports = class Loader {
         this.parent = props.parent ? (typeof props.parent === 'object' ? props.parent : document.querySelector(props.parent)) : document.body;
         this.modalObj;
 
+        this.type = "loader";
+
         this._render();
         this._exportObjInstance();
 

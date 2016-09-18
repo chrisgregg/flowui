@@ -29,10 +29,20 @@ module.exports = function () {
 		_classCallCheck(this, Modal);
 
 		props = props || {};
+
 		this.id = props.id || "modal-" + new Date().getTime();
 		this.parent = props.parent ? _typeof(props.parent) === 'object' ? props.parent : document.querySelector(props.parent) : document.body;
 		this.className = props.className || "";
 		this.children = {}; // associative array of child elements using this modal
+
+		this.type = "dialog";
+
+		// Check if modal already exists, if so assign values from original
+		// and don't re-render or export instance
+		if (window['FlowUI']._modals && window['FlowUI']._modals[this.id]) {
+			Object.assign(this, window['FlowUI']._modals[this.id]);
+			return;
+		}
 
 		this._render();
 		this._exportObjInstance();
@@ -62,15 +72,12 @@ module.exports = function () {
 		key: '_render',
 		value: function _render() {
 
-			if (!document.getElementById(this.id)) {
+			this.parent.className += ' flowui-modal-parent';
 
-				this.parent.className += ' flowui-modal-parent';
-
-				var container = document.createElement("div");
-				container.setAttribute("id", this.id);
-				container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
-				this.parent.appendChild(container);
-			}
+			var container = document.createElement("div");
+			container.setAttribute("id", this.id);
+			container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
+			this.parent.appendChild(container);
 		}
 
 		/**
