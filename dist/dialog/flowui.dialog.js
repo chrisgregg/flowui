@@ -183,11 +183,12 @@ module.exports = function () {
 
                 // Content can contain scripts, which need to be eval
                 var embeddedScripts = content.getElementsByTagName('script');
-                embeddedScripts.forEach(function (script) {
+                for (var key in embeddedScripts) {
+                    var script = embeddedScripts[key];
                     if (script.src == "") {
                         eval(script.innerHTML);
                     }
-                });
+                }
             });
             content.setAttribute('class', 'inner-content');
             contentWrapper.appendChild(content);
