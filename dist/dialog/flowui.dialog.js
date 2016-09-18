@@ -183,8 +183,8 @@ module.exports = function () {
 
                 // Content can contain scripts, which need to be eval
                 var embeddedScripts = content.getElementsByTagName('script');
-                for (var key in embeddedScripts) {
-                    var script = embeddedScripts[key];
+                for (var x = 0; x < embeddedScripts.length; x++) {
+                    var script = embeddedScripts[x];
                     if (script.src == "") {
                         eval(script.innerHTML);
                     }
