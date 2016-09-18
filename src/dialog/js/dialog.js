@@ -177,12 +177,12 @@ module.exports = class Dialog {
 
             // Content can contain scripts, which need to be eval
             const embeddedScripts = content.getElementsByTagName('script');
-            embeddedScripts.forEach((script)=> {
+            for (let key in embeddedScripts) {
+                let script = embeddedScripts[key];
                 if (script.src == "") {
                     eval(script.innerHTML);
                 }
-            })
-
+            }
 
         });
         content.setAttribute('class', 'inner-content');
