@@ -174,6 +174,16 @@ module.exports = class Dialog {
         contentPromise.then((html) => {
             content.innerHTML = html;
             this._centerVertically();
+
+            // Content can contain scripts, which need to be eval
+            const embeddedScripts = content.getElementsByTagName('script');
+            embeddedScripts.forEach((script)=> {
+                if (script.src == "") {
+                    eval(script.innerHTML);
+                }
+            })
+
+
         });
         content.setAttribute('class', 'inner-content');
         contentWrapper.appendChild(content);

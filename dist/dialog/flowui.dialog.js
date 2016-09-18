@@ -180,6 +180,14 @@ module.exports = function () {
             contentPromise.then(function (html) {
                 content.innerHTML = html;
                 _this3._centerVertically();
+
+                // Content can contain scripts, which need to be eval
+                var embeddedScripts = content.getElementsByTagName('script');
+                embeddedScripts.forEach(function (script) {
+                    if (script.src == "") {
+                        eval(script.innerHTML);
+                    }
+                });
             });
             content.setAttribute('class', 'inner-content');
             contentWrapper.appendChild(content);
