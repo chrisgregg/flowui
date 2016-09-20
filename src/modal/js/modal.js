@@ -18,7 +18,10 @@ module.exports = class Modal {
 		this.className = props.className || "";
 		this.children = {}; // associative array of child elements using this modal
 
-		this.type = "dialog";
+		// Public Properties
+		this.type = "modal";
+		this.element = null;
+
 
 		// Check if modal already exists, if so assign values from original
 		// and don't re-render or export instance
@@ -60,6 +63,9 @@ module.exports = class Modal {
 		container.setAttribute("id", this.id);
 		container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
 		this.parent.appendChild(container);
+		
+		this.element = container;
+
 	}
 
 	/**

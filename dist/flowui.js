@@ -180,15 +180,6 @@ module.exports = function () {
             contentPromise.then(function (html) {
                 content.innerHTML = html;
                 _this3._centerVertically();
-
-                // Content can contain scripts, which need to be eval
-                var embeddedScripts = content.getElementsByTagName('script');
-                for (var x = 0; x < embeddedScripts.length; x++) {
-                    var script = embeddedScripts[x];
-                    if (script.src == "") {
-                        eval(script.innerHTML);
-                    }
-                }
             });
             content.setAttribute('class', 'inner-content');
             contentWrapper.appendChild(content);
@@ -220,11 +211,22 @@ module.exports = function () {
             container.appendChild(contentWrapper);
 
             // Add to modal
-            var modalElement = document.getElementById(this.modalObj.id);
-            modalElement.appendChild(container);
+            this.modalObj.element.appendChild(container);
+            /*let modalElement = document.getElementById(this.modalObj.id);
+            modalElement.appendChild(container);*/
 
             // Store dialog element to class property
             this.dialogElement = container;
+
+            // Content can contain scripts, which need to be eval'd first before they
+            // can be executed
+            var embeddedScripts = this.dialogElement.getElementsByTagName('script');
+            for (var _x = 0; _x < embeddedScripts.length; _x++) {
+                var script = embeddedScripts[_x];
+                if (script.src == "") {
+                    eval(script.innerHTML);
+                }
+            }
 
             // Once content loaded, display
             contentPromise.then(function () {
@@ -288,7 +290,7 @@ module.exports = function () {
                         childDialogs.push(flowObject);
                     }
                 }
-                return childDialogs.length > 1;
+                return childDialogs.length > 0;
             };
 
             if (!modalHasChildDialogs()) {
@@ -315,6 +317,14 @@ module.exports = function () {
                     // modal obj already removed
                 }
             }, 1000);
+
+            // Delete object reference from parent modal's children
+            for (var key in this.modalObj.children) {
+                var flowObj = this.modalObj.children[key];
+                if (flowObj.id == this.id) {
+                    delete this.modalObj.children[this.id];
+                }
+            }
 
             delete window['FlowUI']._dialogs[this.id];
 
@@ -729,7 +739,9 @@ module.exports = function () {
 		this.className = props.className || "";
 		this.children = {}; // associative array of child elements using this modal
 
-		this.type = "dialog";
+		// Public Properties
+		this.type = "modal";
+		this.element = null;
 
 		// Check if modal already exists, if so assign values from original
 		// and don't re-render or export instance
@@ -772,6 +784,8 @@ module.exports = function () {
 			container.setAttribute("id", this.id);
 			container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
 			this.parent.appendChild(container);
+
+			this.element = container;
 		}
 
 		/**

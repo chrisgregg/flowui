@@ -174,16 +174,6 @@ module.exports = class Dialog {
         contentPromise.then((html) => {
             content.innerHTML = html;
             this._centerVertically();
-
-            // Content can contain scripts, which need to be eval
-            const embeddedScripts = content.getElementsByTagName('script');
-            for (let x=0; x<embeddedScripts.length; x++) {
-                let script = embeddedScripts[x];
-                if (script.src == "") {
-                    eval(script.innerHTML);
-                }
-            }
-
         });
         content.setAttribute('class', 'inner-content');
         contentWrapper.appendChild(content);
@@ -213,11 +203,22 @@ module.exports = class Dialog {
         container.appendChild(contentWrapper);
 
         // Add to modal
-        let modalElement = document.getElementById(this.modalObj.id);
-        modalElement.appendChild(container);
+        this.modalObj.element.appendChild(container);
+        /*let modalElement = document.getElementById(this.modalObj.id);
+        modalElement.appendChild(container);*/
 
         // Store dialog element to class property
         this.dialogElement = container;
+
+        // Content can contain scripts, which need to be eval'd first before they
+        // can be executed
+        const embeddedScripts = this.dialogElement.getElementsByTagName('script');
+        for (let x=0; x<embeddedScripts.length; x++) {
+            let script = embeddedScripts[x];
+            if (script.src == "") {
+                eval(script.innerHTML);
+            }
+        }
 
         // Once content loaded, display
         contentPromise.then(() => {
@@ -281,7 +282,7 @@ module.exports = class Dialog {
                     childDialogs.push(flowObject);
                 }
             }
-            return childDialogs.length > 1;
+            return childDialogs.length > 0;
 
         }
 
@@ -310,6 +311,14 @@ module.exports = class Dialog {
                 // modal obj already removed
             }
         }, 1000);
+
+        // Delete object reference from parent modal's children
+        for (var key in this.modalObj.children) {
+            var flowObj = this.modalObj.children[key];
+            if (flowObj.id == this.id) {
+                delete this.modalObj.children[this.id];
+            }
+        }
 
         delete window['FlowUI']._dialogs[this.id];
 
