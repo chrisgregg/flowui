@@ -258,11 +258,12 @@ module.exports = function () {
             var scrollPosition = window.scrollY;
 
             // X & Y Coordinates
-            var x = viewportWidth / 2 - dialogWidth / 2;
+            //let x = (viewportWidth / 2) - (dialogWidth / 2);
             var y = scrollPosition + viewportHeight / 2 - dialogHeight / 2;
+            y = y < 0 ? 30 : y;
 
             dialogElement.style.top = y + 'px';
-            dialogElement.style.left = 'calc(50% - ' + dialogWidth / 2 + 'px)';
+            //dialogElement.style.left = 'calc(50% - '+ (dialogWidth/2) +'px)';
         }
 
         /**
@@ -374,7 +375,7 @@ module.exports = function () {
                     break;
                 case 'inactive':
                     if (Object.keys(window['FlowUI']._dialogs).length > 1) {
-                        document.getElementById(this.id).className = sanitizeClasses() + ' ' + this.options.animation.out;
+                        document.getElementById(this.id).className = sanitizeClasses() + ' inactive'; // + this.options.animation.out;
                         break;
                     }
                     document.getElementById(this.id).className = sanitizeClasses() + ' ' + this.options.animation.out;
@@ -434,8 +435,10 @@ module.exports = function () {
             // Allow user to hit escape to close window (unless overwritten by param)
             if (this.options.escapable) {
                 window.addEventListener("keyup", function (event) {
-                    _this7._close();
-                });
+                    if (event.keyCode == 27) {
+                        _this7._close();
+                    }
+                }, false);
             }
         }
 

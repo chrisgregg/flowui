@@ -249,12 +249,13 @@ module.exports = class Dialog {
         const scrollPosition = window.scrollY;
 
         // X & Y Coordinates
-        const x = (viewportWidth / 2) - (dialogWidth / 2);
-        const y = scrollPosition + (viewportHeight / 2) - (dialogHeight / 2);
+        //let x = (viewportWidth / 2) - (dialogWidth / 2);
+        let y = scrollPosition + (viewportHeight / 2) - (dialogHeight / 2);
+        y = y < 0 ? 30 : y;
 
 
         dialogElement.style.top = y + 'px';
-        dialogElement.style.left = 'calc(50% - '+ (dialogWidth/2) +'px)';
+        //dialogElement.style.left = 'calc(50% - '+ (dialogWidth/2) +'px)';
 
     }
 
@@ -362,7 +363,7 @@ module.exports = class Dialog {
                 break;
             case 'inactive':
                 if (Object.keys(window['FlowUI']._dialogs).length > 1) {
-                    document.getElementById(this.id).className =  sanitizeClasses() + ' ' + this.options.animation.out;
+                    document.getElementById(this.id).className =  sanitizeClasses() + ' inactive';
                     break;
                 }
                 document.getElementById(this.id).className = sanitizeClasses() + ' ' +  this.options.animation.out;
@@ -417,8 +418,10 @@ module.exports = class Dialog {
         // Allow user to hit escape to close window (unless overwritten by param)
         if (this.options.escapable) {
             window.addEventListener("keyup", (event) => {
-                this._close();
-            });
+                if (event.keyCode == 27) {
+                    this._close();
+                }
+            }, false);
         }
 
     }

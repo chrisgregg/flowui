@@ -140,16 +140,22 @@ html {
 
 .flowui-dialog {
   opacity: 0;
-  width: calc(800px);
+  width: 800px;
   background-color: #FFF;
-  position: absolute;
-  /*margin: auto;*/
+  position: relative;
+  margin: auto;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
   overflow: hidden;
-  transition: transform 0.5s ease, opacity 0.5s ease; }
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  /*&[status=inactive] {
+    position: absolute;
+    left:50%
+  }*/ }
+  .flowui-dialog.inactive {
+    display: none; }
   .flowui-dialog .title {
     font-size: 24px;
     background-color: #333;
@@ -174,12 +180,6 @@ html {
   .flowui-dialog .buttons {
     padding: 25px;
     text-align: right; }
-
-.animateMultiIn {
-  transition: transform 0.5s ease, opacity 0.5s ease; }
-
-.inactiveOut {
-  animation: inactiveAnimate 0.5s 1s; }
 
 @media (max-width: 800px) {
   .flowui-dialog {
