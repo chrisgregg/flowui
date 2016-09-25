@@ -1,5 +1,7 @@
 'use strict';
 
+const Helpers = require('./helpers.js');
+
 module.exports = class Dialog {
 
     /**
@@ -48,10 +50,6 @@ module.exports = class Dialog {
 
     get dispose() {
         return this._dispose;
-    }
-
-    get centerVertically() {
-        return this._centerVertically;
     }
 
 
@@ -173,7 +171,6 @@ module.exports = class Dialog {
         let content = document.createElement('div');
         contentPromise.then((html) => {
             content.innerHTML = html;
-            this._centerVertically();
         });
         content.setAttribute('class', 'inner-content');
         contentWrapper.appendChild(content);
@@ -228,7 +225,7 @@ module.exports = class Dialog {
                 this.loaderObj.close(false);
             }
 
-            this._centerVertically();
+            this._positionDialog();
             this._focus();
         });
 
@@ -236,10 +233,11 @@ module.exports = class Dialog {
     }
 
     /**
-     * Centre Dialog Vertically in Viewport
+     * Positions Dialog in center of viewport,
+     * scrolling page to top of Dialog if needed
      * @private
      */
-    _centerVertically() {
+    _positionDialog() {
 
         let dialogElement = document.getElementById(this.id);
         const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -248,14 +246,27 @@ module.exports = class Dialog {
         const dialogWidth = dialogElement.offsetWidth;
         const scrollPosition = window.scrollY;
 
-        // X & Y Coordinates
-        //let x = (viewportWidth / 2) - (dialogWidth / 2);
         let y = scrollPosition + (viewportHeight / 2) - (dialogHeight / 2);
         y = y < 0 ? 30 : y;
 
-
         dialogElement.style.top = y + 'px';
-        //dialogElement.style.left = 'calc(50% - '+ (dialogWidth/2) +'px)';
+
+        // If dialog heigh doesn't fit in viewport, scroll page to top of dialog
+        if (dialogHeight > viewportHeight) {
+            this._scrollToDialog();
+        }
+
+    }
+
+    /**
+     * Scroll Page to top of Dialog
+     * @private
+     */
+    _scrollToDialog() {
+
+        let yPosition = this.dialogElement.offsetTop - 30;
+        yPosition = yPosition < 0 ?  0 : yPosition;
+        Helpers.scrollTo(document.body, yPosition, 1000);
 
     }
 

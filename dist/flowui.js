@@ -5,6 +5,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Helpers = require('./helpers.js');
+
 module.exports = function () {
 
     /**
@@ -55,7 +57,7 @@ module.exports = function () {
     }
 
     _createClass(Dialog, [{
-        key: "_exportObjInstance",
+        key: '_exportObjInstance',
 
 
         /**
@@ -78,7 +80,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_renderModal",
+        key: '_renderModal',
         value: function _renderModal() {
 
             // Check if modal already exists for parent
@@ -105,7 +107,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_getContent",
+        key: '_getContent',
         value: function _getContent() {
             var _this2 = this;
 
@@ -152,7 +154,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_renderDialog",
+        key: '_renderDialog',
         value: function _renderDialog() {
             var _this3 = this;
 
@@ -179,7 +181,6 @@ module.exports = function () {
             var content = document.createElement('div');
             contentPromise.then(function (html) {
                 content.innerHTML = html;
-                _this3._centerVertically();
             });
             content.setAttribute('class', 'inner-content');
             contentWrapper.appendChild(content);
@@ -236,19 +237,20 @@ module.exports = function () {
                     _this3.loaderObj.close(false);
                 }
 
-                _this3._centerVertically();
+                _this3._positionDialog();
                 _this3._focus();
             });
         }
 
         /**
-         * Centre Dialog Vertically in Viewport
+         * Positions Dialog in center of viewport,
+         * scrolling page to top of Dialog if needed
          * @private
          */
 
     }, {
-        key: "_centerVertically",
-        value: function _centerVertically() {
+        key: '_positionDialog',
+        value: function _positionDialog() {
 
             var dialogElement = document.getElementById(this.id);
             var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -257,13 +259,29 @@ module.exports = function () {
             var dialogWidth = dialogElement.offsetWidth;
             var scrollPosition = window.scrollY;
 
-            // X & Y Coordinates
-            //let x = (viewportWidth / 2) - (dialogWidth / 2);
             var y = scrollPosition + viewportHeight / 2 - dialogHeight / 2;
             y = y < 0 ? 30 : y;
 
             dialogElement.style.top = y + 'px';
-            //dialogElement.style.left = 'calc(50% - '+ (dialogWidth/2) +'px)';
+
+            // If dialog heigh doesn't fit in viewport, scroll page to top of dialog
+            if (dialogHeight > viewportHeight) {
+                this._scrollToDialog();
+            }
+        }
+
+        /**
+         * Scroll Page to top of Dialog
+         * @private
+         */
+
+    }, {
+        key: '_scrollToDialog',
+        value: function _scrollToDialog() {
+
+            var yPosition = this.dialogElement.offsetTop - 30;
+            yPosition = yPosition < 0 ? 0 : yPosition;
+            Helpers.scrollTo(document.body, yPosition, 1000);
         }
 
         /**
@@ -272,7 +290,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_close",
+        key: '_close',
         value: function _close() {
             var _this4 = this;
 
@@ -306,7 +324,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_dispose",
+        key: '_dispose',
         value: function _dispose() {
             var _this5 = this;
 
@@ -338,7 +356,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_reactivatePreviousDiaog",
+        key: '_reactivatePreviousDiaog',
         value: function _reactivatePreviousDiaog() {
             var allDialogs = window['FlowUI']._dialogs;
             var previousDialog = allDialogs[Object.keys(allDialogs)[Object.keys(allDialogs).length - 1]];
@@ -357,7 +375,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_onStateChange",
+        key: '_onStateChange',
         value: function _onStateChange(e) {
             var _this6 = this;
 
@@ -375,7 +393,7 @@ module.exports = function () {
                     break;
                 case 'inactive':
                     if (Object.keys(window['FlowUI']._dialogs).length > 1) {
-                        document.getElementById(this.id).className = sanitizeClasses() + ' inactive'; // + this.options.animation.out;
+                        document.getElementById(this.id).className = sanitizeClasses() + ' inactive';
                         break;
                     }
                     document.getElementById(this.id).className = sanitizeClasses() + ' ' + this.options.animation.out;
@@ -394,7 +412,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_setState",
+        key: '_setState',
         value: function _setState(state) {
 
             var event = new CustomEvent("stateChange", { detail: { status: state } });
@@ -407,7 +425,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_focus",
+        key: '_focus',
         value: function _focus() {
 
             var _this = this;
@@ -428,7 +446,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_attachEvents",
+        key: '_attachEvents',
         value: function _attachEvents() {
             var _this7 = this;
 
@@ -448,26 +466,21 @@ module.exports = function () {
          */
 
     }, {
-        key: "_registerEventListeners",
+        key: '_registerEventListeners',
         value: function _registerEventListeners() {
 
             // Listen for dialog state change event
             this.dialogElement.addEventListener('stateChange', this._onStateChange.bind(this), false);
         }
     }, {
-        key: "close",
+        key: 'close',
         get: function get() {
             return this._close;
         }
     }, {
-        key: "dispose",
+        key: 'dispose',
         get: function get() {
             return this._dispose;
-        }
-    }, {
-        key: "centerVertically",
-        get: function get() {
-            return this._centerVertically;
         }
     }]);
 
@@ -500,7 +513,76 @@ var DialogOptions = function DialogOptions(_ref2) {
     };
 };
 
-},{}],2:[function(require,module,exports){
+},{"./helpers.js":2}],2:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+module.exports = function () {
+    function Helpers() {
+        _classCallCheck(this, Helpers);
+    }
+
+    _createClass(Helpers, null, [{
+        key: "scrollTo",
+
+
+        /**
+         * Scroll to
+         * @param element
+         * @param to
+         * @param duration
+         */
+
+        value: function scrollTo(element, to, duration) {
+
+            var _this = this;
+
+            var start = element.scrollTop,
+                change = to - start,
+                increment = 20;
+
+            var animateScroll = function animateScroll(elapsedTime) {
+                elapsedTime += increment;
+                var position = _this.easeInOut(elapsedTime, start, change, duration);
+                element.scrollTop = position;
+                if (elapsedTime < duration) {
+                    setTimeout(function () {
+                        animateScroll(elapsedTime);
+                    }, increment);
+                }
+            };
+
+            animateScroll(0);
+        }
+
+        /**
+         * Easing Function for Scrolling
+         * @param currentTime
+         * @param start
+         * @param change
+         * @param duration
+         * @returns {*}
+         */
+
+    }, {
+        key: "easeInOut",
+        value: function easeInOut(currentTime, start, change, duration) {
+            currentTime /= duration / 2;
+            if (currentTime < 1) {
+                return change / 2 * currentTime * currentTime + start;
+            }
+            currentTime -= 1;
+            return -change / 2 * (currentTime * (currentTime - 2) - 1) + start;
+        }
+    }]);
+
+    return Helpers;
+}();
+
+},{}],3:[function(require,module,exports){
 'use strict';
 
 // Dependencies
@@ -515,7 +597,7 @@ module.exports = {
     Dialog: Dialog
 };
 
-},{"./dialog/js/dialog.js":1,"./loader/js/loader.js":3,"./modal/js/modal.js":4}],3:[function(require,module,exports){
+},{"./dialog/js/dialog.js":1,"./loader/js/loader.js":4,"./modal/js/modal.js":5}],4:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -714,7 +796,7 @@ module.exports = function () {
     return Loader;
 }();
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -834,6 +916,6 @@ module.exports = function () {
 	return Modal;
 }();
 
-},{}]},{},[2])(2)
+},{}]},{},[3])(3)
 });
 
