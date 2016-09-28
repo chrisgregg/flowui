@@ -219,22 +219,22 @@ module.exports = function () {
             // Store dialog element to class property
             this.dialogElement = container;
 
-            // Content can contain scripts, which need to be eval'd first before they
-            // can be executed
-            var embeddedScripts = this.dialogElement.getElementsByTagName('script');
-            for (var _x = 0; _x < embeddedScripts.length; _x++) {
-                var script = embeddedScripts[_x];
-                if (script.src == "") {
-                    eval(script.innerHTML);
-                }
-            }
-
             // Once content loaded, display
             contentPromise.then(function () {
 
                 // Hide Loader
                 if (_this3.loaderObj) {
                     _this3.loaderObj.close(false);
+                }
+
+                // Content can contain scripts, which need to be eval'd first before they
+                // can be executed
+                var embeddedScripts = _this3.dialogElement.getElementsByTagName('script');
+                for (var _x = 0; _x < embeddedScripts.length; _x++) {
+                    var script = embeddedScripts[_x];
+                    if (script.src == "") {
+                        eval(script.innerHTML);
+                    }
                 }
 
                 _this3._positionDialog();

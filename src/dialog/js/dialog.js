@@ -207,22 +207,22 @@ module.exports = class Dialog {
         // Store dialog element to class property
         this.dialogElement = container;
 
-        // Content can contain scripts, which need to be eval'd first before they
-        // can be executed
-        const embeddedScripts = this.dialogElement.getElementsByTagName('script');
-        for (let x=0; x<embeddedScripts.length; x++) {
-            let script = embeddedScripts[x];
-            if (script.src == "") {
-                eval(script.innerHTML);
-            }
-        }
-
         // Once content loaded, display
         contentPromise.then(() => {
 
             // Hide Loader
             if (this.loaderObj) {
                 this.loaderObj.close(false);
+            }
+
+            // Content can contain scripts, which need to be eval'd first before they
+            // can be executed
+            const embeddedScripts = this.dialogElement.getElementsByTagName('script');
+            for (let x=0; x<embeddedScripts.length; x++) {
+                let script = embeddedScripts[x];
+                if (script.src == "") {
+                    eval(script.innerHTML);
+                }
             }
 
             this._positionDialog();
