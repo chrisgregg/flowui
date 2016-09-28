@@ -215,16 +215,7 @@ module.exports = class Dialog {
                 this.loaderObj.close(false);
             }
 
-            // Content can contain scripts, which need to be eval'd first before they
-            // can be executed
-            const embeddedScripts = this.dialogElement.getElementsByTagName('script');
-            for (let x=0; x<embeddedScripts.length; x++) {
-                let script = embeddedScripts[x];
-                if (script.src == "") {
-                    eval(script.innerHTML);
-                }
-            }
-
+            this._bindScripts();
             this._positionDialog();
             this._focus();
         });
@@ -270,6 +261,24 @@ module.exports = class Dialog {
 
     }
 
+
+    /**
+     * Bind Scripts
+     * Dialog content can contain scripts, which need to be added to dom in order to be made available
+     * @private
+     */
+    _bindScripts() {
+
+        const embeddedScripts = this.dialogElement.getElementsByTagName('script');
+        for (let x=0; x<embeddedScripts.length; x++) {
+            let script = embeddedScripts[x];
+            if (script.src == "") {
+                let newScript = document.createElement('script');
+                newScript.text = script.innerHTML;
+                document.documentElement.appendChild(newScript);
+            }
+        }
+    }
 
 
     /**

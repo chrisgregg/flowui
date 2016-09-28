@@ -227,16 +227,7 @@ module.exports = function () {
                     _this3.loaderObj.close(false);
                 }
 
-                // Content can contain scripts, which need to be eval'd first before they
-                // can be executed
-                var embeddedScripts = _this3.dialogElement.getElementsByTagName('script');
-                for (var _x = 0; _x < embeddedScripts.length; _x++) {
-                    var script = embeddedScripts[_x];
-                    if (script.src == "") {
-                        eval(script.innerHTML);
-                    }
-                }
-
+                _this3._bindScripts();
                 _this3._positionDialog();
                 _this3._focus();
             });
@@ -282,6 +273,21 @@ module.exports = function () {
             var yPosition = this.dialogElement.offsetTop - 30;
             yPosition = yPosition < 0 ? 0 : yPosition;
             Helpers.scrollTo(document.body, yPosition, 1000);
+        }
+    }, {
+        key: '_bindScripts',
+        value: function _bindScripts() {
+
+            // Content can contain scripts, which need to be added to dom in order to be made available
+            var embeddedScripts = this.dialogElement.getElementsByTagName('script');
+            for (var x = 0; x < embeddedScripts.length; x++) {
+                var script = embeddedScripts[x];
+                if (script.src == "") {
+                    var newScript = document.createElement('script');
+                    newScript.text = script.innerHTML;
+                    document.documentElement.appendChild(newScript);
+                }
+            }
         }
 
         /**
