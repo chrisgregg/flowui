@@ -272,12 +272,16 @@ module.exports = class Dialog {
         const embeddedScripts = this.dialogElement.getElementsByTagName('script');
         for (let x=0; x<embeddedScripts.length; x++) {
             let script = embeddedScripts[x];
+            let newScript = document.createElement('script');
             if (script.src == "") {
-                let newScript = document.createElement('script');
                 newScript.text = script.innerHTML;
-                document.documentElement.appendChild(newScript);
             }
+            else {
+                newScript.src = script.src;
+            }
+            document.documentElement.appendChild(newScript);
         }
+        
     }
 
 

@@ -274,19 +274,27 @@ module.exports = function () {
             yPosition = yPosition < 0 ? 0 : yPosition;
             Helpers.scrollTo(document.body, yPosition, 1000);
         }
+
+        /**
+         * Bind Scripts
+         * Dialog content can contain scripts, which need to be added to dom in order to be made available
+         * @private
+         */
+
     }, {
         key: '_bindScripts',
         value: function _bindScripts() {
 
-            // Content can contain scripts, which need to be added to dom in order to be made available
             var embeddedScripts = this.dialogElement.getElementsByTagName('script');
             for (var x = 0; x < embeddedScripts.length; x++) {
                 var script = embeddedScripts[x];
+                var newScript = document.createElement('script');
                 if (script.src == "") {
-                    var newScript = document.createElement('script');
                     newScript.text = script.innerHTML;
-                    document.documentElement.appendChild(newScript);
+                } else {
+                    newScript.src = script.src;
                 }
+                document.documentElement.appendChild(newScript);
             }
         }
 
