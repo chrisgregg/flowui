@@ -76,15 +76,19 @@ module.exports = class Dialog {
      _renderModal() {
 
         // Check if modal already exists for parent
-        const existingModal = this.parent.getElementsByClassName('flowui-modal')[0];
-        if (existingModal) {
-            this.modalObj = window['FlowUI']._modals[existingModal.id];
-        }
-        // Otherwise, create new instance
-        else {
-            this.modalObj = new window['FlowUI'].Modal();
+        if (window['FlowUI']._modals) {
+            for (var key in window['FlowUI']._modals) {
+                let m = window['FlowUI']._modals[key];
+                if (m.parent == this.parent) {
+                    this.modalObj = window['FlowUI']._modals[m.id];
+                }
+            }
         }
 
+        // If it doesn't exist, create new instance
+        if (!this.modalObj) {
+            this.modalObj = new window['FlowUI'].Modal();
+        }
 
         // If dialog content requires http request, show loader before rendering
         if (this.url || this.promise) {
