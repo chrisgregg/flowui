@@ -269,19 +269,57 @@ module.exports = class Dialog {
      */
     _bindScripts() {
 
-        const embeddedScripts = this.dialogElement.getElementsByTagName('script');
-        for (let x=0; x<embeddedScripts.length; x++) {
-            let script = embeddedScripts[x];
-            let newScript = document.createElement('script');
+        const scripts = Array.from(this.dialogElement.getElementsByTagName('script'));
+        let externalScripts = [];
+        let embeddedScripts = [];
+
+        // Separate external script from embedded
+        scripts.forEach((script) => {
             if (script.src == "") {
-                newScript.text = script.innerHTML;
+                embeddedScripts.push(script);
             }
             else {
-                newScript.src = script.src;
+                externalScripts.push(script.src);
             }
-            document.documentElement.appendChild(newScript);
+        });
+
+        // Helper function to load array of external scripts
+        let loadScripts = function(scriptsArray, onComplete) {
+
+            if (scriptsArray.length > 0) {
+                let newScript = document.createElement('script');
+                newScript.type = 'text/javascript';
+                newScript.src = scriptsArray[0];
+                document.documentElement.appendChild(newScript);
+
+                newScript.addEventListener ("load", function() {
+                    console.log('External script from content loaded:', scriptsArray[0]);
+                    scriptsArray.shift();
+                    loadScripts(scriptsArray, onComplete);
+
+                }, false);
+            }
+            else {
+                onComplete();
+            }
         }
-        
+
+        // First, load external scripts
+        loadScripts(externalScripts, function() {
+
+            // Once all external scripts loaded, add embedded scripts
+            embeddedScripts.forEach((script) => {
+                let newScript = document.createElement('script');
+                newScript.text = script.innerHTML;
+                document.documentElement.appendChild(newScript);
+                console.log('Embedded script from content added');
+            });
+
+        });
+
+
+
+
     }
 
 

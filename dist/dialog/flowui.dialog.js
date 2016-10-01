@@ -285,17 +285,49 @@ module.exports = function () {
         key: '_bindScripts',
         value: function _bindScripts() {
 
-            var embeddedScripts = this.dialogElement.getElementsByTagName('script');
-            for (var x = 0; x < embeddedScripts.length; x++) {
-                var script = embeddedScripts[x];
-                var newScript = document.createElement('script');
+            var scripts = Array.from(this.dialogElement.getElementsByTagName('script'));
+            var externalScripts = [];
+            var embeddedScripts = [];
+
+            // Separate external script from embedded
+            scripts.forEach(function (script) {
                 if (script.src == "") {
-                    newScript.text = script.innerHTML;
+                    embeddedScripts.push(script);
                 } else {
-                    newScript.src = script.src;
+                    externalScripts.push(script.src);
                 }
-                document.documentElement.appendChild(newScript);
-            }
+            });
+
+            // Helper function to load array of external scripts
+            var loadScripts = function loadScripts(scriptsArray, onComplete) {
+
+                if (scriptsArray.length > 0) {
+                    var newScript = document.createElement('script');
+                    newScript.type = 'text/javascript';
+                    newScript.src = scriptsArray[0];
+                    document.documentElement.appendChild(newScript);
+
+                    newScript.addEventListener("load", function () {
+                        console.log('External script from content loaded:', scriptsArray[0]);
+                        scriptsArray.shift();
+                        loadScripts(scriptsArray, onComplete);
+                    }, false);
+                } else {
+                    onComplete();
+                }
+            };
+
+            // First, load external scripts
+            loadScripts(externalScripts, function () {
+
+                // Once all external scripts loaded, add embedded scripts
+                embeddedScripts.forEach(function (script) {
+                    var newScript = document.createElement('script');
+                    newScript.text = script.innerHTML;
+                    document.documentElement.appendChild(newScript);
+                    console.log('Embedded script from content added');
+                });
+            });
         }
 
         /**
