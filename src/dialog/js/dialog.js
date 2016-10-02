@@ -220,7 +220,7 @@ module.exports = class Dialog {
             this._bindScripts();
             this._positionDialog();
             this._focus();
-            this._disposeInacive();
+
         });
 
 
@@ -427,6 +427,12 @@ module.exports = class Dialog {
                 document.getElementById(this.id).className =  sanitizeClasses() + ' ' + this.options.animation.in;
                 break;
             case 'inactive':
+                // If dialog isn't stackable, instead of just inacivating - we ne to also dispose
+                if (!this.options.stackable) {
+                    document.getElementById(this.id).className =  sanitizeClasses() + ' inactive';
+                    this._dispose();
+                    break;
+                }
                 if (Object.keys(window['FlowUI']._dialogs).length > 1) {
                     document.getElementById(this.id).className =  sanitizeClasses() + ' inactive';
                     break;
@@ -475,27 +481,6 @@ module.exports = class Dialog {
     }
 
 
-    /**
-     * Dispose of Inactive Dialogs
-     * If dialogs aren't stackable, we need to remove all inactive dialogs
-     * @private
-     */
-    _disposeInacive() {
-
-        if (!this.options.stackable) {
-
-            let allDialogs = window['FlowUI'] ? window['FlowUI']._dialogs : {};
-            for (var key in allDialogs) {
-                var dialog = allDialogs[key];
-                if (dialog.id != this.id) {
-                    this._setState('inactive');
-                    this._dispose();
-
-                }
-            }
-
-        }
-    }
 
     /**
      * Bind any necessary events
@@ -534,7 +519,7 @@ module.exports = class Dialog {
  */
 class DialogOptions {
 
-    constructor({className, stackable = true, escapable = true, animation = {}, events = {} }) {
+    constructor({className, stackable = false, escapable = true, animation = {}, events = {} }) {
 
             this.className = className || '';
             this.escapable = escapable;

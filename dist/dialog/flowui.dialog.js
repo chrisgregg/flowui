@@ -233,7 +233,6 @@ module.exports = function () {
                 _this3._bindScripts();
                 _this3._positionDialog();
                 _this3._focus();
-                _this3._disposeInacive();
             });
         }
 
@@ -442,6 +441,12 @@ module.exports = function () {
                     document.getElementById(this.id).className = sanitizeClasses() + ' ' + this.options.animation.in;
                     break;
                 case 'inactive':
+                    // If dialog isn't stackable, instead of just inacivating - we ne to also dispose
+                    if (!this.options.stackable) {
+                        document.getElementById(this.id).className = sanitizeClasses() + ' inactive';
+                        this._dispose();
+                        break;
+                    }
                     if (Object.keys(window['FlowUI']._dialogs).length > 1) {
                         document.getElementById(this.id).className = sanitizeClasses() + ' inactive';
                         break;
@@ -486,29 +491,6 @@ module.exports = function () {
                 var dialog = allDialogs[key];
                 if (dialog.id != _this.id) {
                     dialog._setState("inactive");
-                }
-            }
-        }
-
-        /**
-         * Dispose of Inactive Dialogs
-         * If dialogs aren't stackable, we need to remove all inactive dialogs
-         * @private
-         */
-
-    }, {
-        key: '_disposeInacive',
-        value: function _disposeInacive() {
-
-            if (!this.options.stackable) {
-
-                var allDialogs = window['FlowUI'] ? window['FlowUI']._dialogs : {};
-                for (var key in allDialogs) {
-                    var dialog = allDialogs[key];
-                    if (dialog.id != this.id) {
-                        this._setState('inactive');
-                        this._dispose();
-                    }
                 }
             }
         }
@@ -567,7 +549,7 @@ module.exports = function () {
 var DialogOptions = function DialogOptions(_ref2) {
     var className = _ref2.className;
     var _ref2$stackable = _ref2.stackable;
-    var stackable = _ref2$stackable === undefined ? true : _ref2$stackable;
+    var stackable = _ref2$stackable === undefined ? false : _ref2$stackable;
     var _ref2$escapable = _ref2.escapable;
     var escapable = _ref2$escapable === undefined ? true : _ref2$escapable;
     var _ref2$animation = _ref2.animation;
