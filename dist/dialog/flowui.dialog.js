@@ -218,8 +218,6 @@ module.exports = function () {
 
             // Add to modal
             this.modalObj.element.appendChild(container);
-            /*let modalElement = document.getElementById(this.modalObj.id);
-            modalElement.appendChild(container);*/
 
             // Store dialog element to class property
             this.dialogElement = container;
@@ -235,6 +233,7 @@ module.exports = function () {
                 _this3._bindScripts();
                 _this3._positionDialog();
                 _this3._focus();
+                _this3._disposeInacive();
             });
         }
 
@@ -398,7 +397,7 @@ module.exports = function () {
 
             delete window['FlowUI']._dialogs[this.id];
 
-            this._reactivatePreviousDiaog();
+            this._reactivatePreviousDialog();
         }
 
         /**
@@ -407,8 +406,8 @@ module.exports = function () {
          */
 
     }, {
-        key: '_reactivatePreviousDiaog',
-        value: function _reactivatePreviousDiaog() {
+        key: '_reactivatePreviousDialog',
+        value: function _reactivatePreviousDialog() {
             var allDialogs = window['FlowUI']._dialogs;
             var previousDialog = allDialogs[Object.keys(allDialogs)[Object.keys(allDialogs).length - 1]];
             if (previousDialog) {
@@ -492,6 +491,29 @@ module.exports = function () {
         }
 
         /**
+         * Dispose of Inactive Dialogs
+         * If dialogs aren't stackable, we need to remove all inactive dialogs
+         * @private
+         */
+
+    }, {
+        key: '_disposeInacive',
+        value: function _disposeInacive() {
+
+            if (!this.options.stackable) {
+
+                var allDialogs = window['FlowUI'] ? window['FlowUI']._dialogs : {};
+                for (var key in allDialogs) {
+                    var dialog = allDialogs[key];
+                    if (dialog.id != this.id) {
+                        this._setState('inactive');
+                        this._dispose();
+                    }
+                }
+            }
+        }
+
+        /**
          * Bind any necessary events
          * @private
          */
@@ -544,6 +566,8 @@ module.exports = function () {
 
 var DialogOptions = function DialogOptions(_ref2) {
     var className = _ref2.className;
+    var _ref2$stackable = _ref2.stackable;
+    var stackable = _ref2$stackable === undefined ? true : _ref2$stackable;
     var _ref2$escapable = _ref2.escapable;
     var escapable = _ref2$escapable === undefined ? true : _ref2$escapable;
     var _ref2$animation = _ref2.animation;
@@ -555,6 +579,7 @@ var DialogOptions = function DialogOptions(_ref2) {
 
     this.className = className || '';
     this.escapable = escapable;
+    this.stackable = stackable;
     this.animation = {
         in: animation.in || 'pulseIn',
         out: animation.out || 'pulseOut'

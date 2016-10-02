@@ -205,8 +205,6 @@ module.exports = class Dialog {
 
         // Add to modal
         this.modalObj.element.appendChild(container);
-        /*let modalElement = document.getElementById(this.modalObj.id);
-        modalElement.appendChild(container);*/
 
         // Store dialog element to class property
         this.dialogElement = container;
@@ -222,6 +220,7 @@ module.exports = class Dialog {
             this._bindScripts();
             this._positionDialog();
             this._focus();
+            this._disposeInacive();
         });
 
 
@@ -389,14 +388,14 @@ module.exports = class Dialog {
 
         delete window['FlowUI']._dialogs[this.id];
 
-        this._reactivatePreviousDiaog();
+        this._reactivatePreviousDialog();
     }
 
     /**
      * Reactives previous dialog (if any)
      * @private
      */
-    _reactivatePreviousDiaog() {
+    _reactivatePreviousDialog() {
         let allDialogs = window['FlowUI']._dialogs;
         let previousDialog = allDialogs[Object.keys(allDialogs)[Object.keys(allDialogs).length - 1]]
         if (previousDialog) {
@@ -475,6 +474,29 @@ module.exports = class Dialog {
         }
     }
 
+
+    /**
+     * Dispose of Inactive Dialogs
+     * If dialogs aren't stackable, we need to remove all inactive dialogs
+     * @private
+     */
+    _disposeInacive() {
+
+        if (!this.options.stackable) {
+
+            let allDialogs = window['FlowUI'] ? window['FlowUI']._dialogs : {};
+            for (var key in allDialogs) {
+                var dialog = allDialogs[key];
+                if (dialog.id != this.id) {
+                    this._setState('inactive');
+                    this._dispose();
+
+                }
+            }
+
+        }
+    }
+
     /**
      * Bind any necessary events
      * @private
@@ -512,10 +534,11 @@ module.exports = class Dialog {
  */
 class DialogOptions {
 
-    constructor({className, escapable = true, animation = {}, events = {} }) {
+    constructor({className, stackable = true, escapable = true, animation = {}, events = {} }) {
 
             this.className = className || '';
             this.escapable = escapable;
+            this.stackable = stackable;
             this.animation =  {
                 in: animation.in || 'pulseIn',
                 out: animation.out || 'pulseOut'
