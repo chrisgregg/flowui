@@ -138,6 +138,26 @@ html {
   -webkit-animation-name: zoomOutLoader;
   animation-name: zoomOutLoader; }
 
+.flowui-button {
+  display: inline-block;
+  position: relative;
+  min-width: 80px;
+  padding: 15px;
+  border-radius: 2px;
+  font-size: 1em;
+  background-color: #fff;
+  color: #646464;
+  background-color: #0f9d58;
+  color: #fff;
+  text-align: center;
+  margin: 3px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+  text-decoration: none; }
+  .flowui-button:hover {
+    color: #fff;
+    text-decoration: none; }
+
 .flowui-dialog {
   opacity: 0;
   width: 800px;
@@ -192,25 +212,6 @@ html {
       text-align: center; }
       .flowui-dialog .buttons a {
         display: block; } }
-
-.flowui-button {
-  display: inline-block;
-  position: relative;
-  min-width: 80px;
-  padding: 15px;
-  border-radius: 2px;
-  font-size: 1em;
-  background-color: #fff;
-  color: #646464;
-  background-color: #0f9d58;
-  color: #fff;
-  text-align: center;
-  margin: 3px;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-  cursor: pointer;
-  text-decoration: none; }
-  .flowui-button:hover {
-    color: #fff; }
 
 .flowui-modal.animated {
   -webkit-animation-duration: 1s;

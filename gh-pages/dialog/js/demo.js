@@ -77,10 +77,6 @@ var demo = {
         var dialog = new FlowUI.Dialog({
             title: "Dialog #" + count,
             html: "Clicking 'Open New Dialog' will open another dialog and set current dialog to Inactive. Current dialog will become active again once new FlowUI.Dialog is closed.",
-            animation: {
-                in: "pulseIn",
-                out: "pulseOut"
-            },
             buttons: [
                 {title: 'Open New Dialog', onclick: function() {
                     demo.multiple(++count);
@@ -88,7 +84,14 @@ var demo = {
                 {title: 'Close Current Dialog', onclick: function() {
                     dialog.close();
                 }}
-            ]
+            ],
+            options: {
+                stackable: true,
+                animation: {
+                    in: "pulseIn",
+                    out: "pulseOut"
+                }
+            }
         });
     },
 
