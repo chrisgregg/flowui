@@ -1,15 +1,15 @@
 {
-  "name": "FlowUI",
+  "name": "flowui",
   "description": "A set of modular UI components for web and mobile apps",
   "main": [
     "./dist/flowui.css",
     "./dist/flowui.js"
   ],
   "authors": [
-    "chris.gregg@softchoice.com"
+    "chris.gregg@outlook.com"
   ],
   "license": "ISC",
-  "homepage": "https://github.com/softchoice-public/FlowUI",
+  "homepage": "https://github.com/chrisgregg/FlowUI",
   "ignore": [
     "**/.*",
     "node_modules",
