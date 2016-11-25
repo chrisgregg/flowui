@@ -9,7 +9,7 @@
     "chris.gregg@outlook.com"
   ],
   "license": "ISC",
-  "homepage": "https://github.com/chrisgregg/FlowUI",
+  "homepage": "https://github.com/chrisgregg/flowui",
   "ignore": [
     "**/.*",
     "node_modules",
