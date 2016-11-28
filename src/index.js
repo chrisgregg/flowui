@@ -1,7 +1,7 @@
 // Dependencies
-const Modal = require('./modal/js/modal.js');
-const Loader = require('./loader/js/loader.js');
-const Dialog = require('./dialog/js/dialog.js');
+const Modal = require('./modal/js/index.js');
+const Loader = require('./loader/js/index.js');
+const Dialog = require('./dialog/js/index.js');
 
 
 // Export

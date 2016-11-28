@@ -1,7 +1,6 @@
 'use strict';
 
 const gulp = require('gulp');
-const debug = require('gulp-debug');
 const sourcemaps = require('gulp-sourcemaps');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
