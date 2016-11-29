@@ -96,7 +96,7 @@ module.exports = class Dialog {
 
         // If dialog content requires http request, show loader before rendering
         if (this.url || this.promise) {
-            this.loaderObj = Loader({
+            this.loaderObj = new Loader({
                 modalId: this.modalObj.id
             });
         }

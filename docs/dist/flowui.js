@@ -1,4 +1,73 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.FlowUI = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+module.exports = function () {
+    function Helpers() {
+        _classCallCheck(this, Helpers);
+    }
+
+    _createClass(Helpers, null, [{
+        key: "scrollTo",
+
+
+        /**
+         * Scroll to
+         * @param element
+         * @param to
+         * @param duration
+         */
+
+        value: function scrollTo(element, to, duration) {
+
+            var _this = this;
+
+            var start = element.scrollTop,
+                change = to - start,
+                increment = 20;
+
+            var animateScroll = function animateScroll(elapsedTime) {
+                elapsedTime += increment;
+                var position = _this.easeInOut(elapsedTime, start, change, duration);
+                element.scrollTop = position;
+                if (elapsedTime < duration) {
+                    setTimeout(function () {
+                        animateScroll(elapsedTime);
+                    }, increment);
+                }
+            };
+
+            animateScroll(0);
+        }
+
+        /**
+         * Easing Function for Scrolling
+         * @param currentTime
+         * @param start
+         * @param change
+         * @param duration
+         * @returns {*}
+         */
+
+    }, {
+        key: "easeInOut",
+        value: function easeInOut(currentTime, start, change, duration) {
+            currentTime /= duration / 2;
+            if (currentTime < 1) {
+                return change / 2 * currentTime * currentTime + start;
+            }
+            currentTime -= 1;
+            return -change / 2 * (currentTime * (currentTime - 2) - 1) + start;
+        }
+    }]);
+
+    return Helpers;
+}();
+
+},{}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6,6 +75,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Helpers = require('./helpers.js');
+var Modal = require('../../modal/js/index.js');
+var Loader = require('../../loader/js/index.js');
 
 module.exports = function () {
 
@@ -22,14 +93,14 @@ module.exports = function () {
      */
 
     function Dialog(_ref) {
-        var id = _ref.id;
-        var title = _ref.title;
-        var html = _ref.html;
-        var url = _ref.url;
-        var promise = _ref.promise;
-        var buttons = _ref.buttons;
-        var _ref$options = _ref.options;
-        var options = _ref$options === undefined ? {} : _ref$options;
+        var id = _ref.id,
+            title = _ref.title,
+            html = _ref.html,
+            url = _ref.url,
+            promise = _ref.promise,
+            buttons = _ref.buttons,
+            _ref$options = _ref.options,
+            options = _ref$options === undefined ? {} : _ref$options;
 
         _classCallCheck(this, Dialog);
 
@@ -50,6 +121,8 @@ module.exports = function () {
         this.dialogElement = null;
         this.parent = document.body;
 
+        window['FlowUI'] = window['FlowUI'] || {};
+
         this._renderDialog();
         this._attachEvents();
         this._registerEventListeners();
@@ -66,6 +139,7 @@ module.exports = function () {
          * @private
          */
         value: function _exportObjInstance() {
+
             window['FlowUI'] = window['FlowUI'] || {};
             window['FlowUI']._dialogs = window['FlowUI']._dialogs || {};
             window['FlowUI']._dialogs[this.id] = this;
@@ -95,12 +169,12 @@ module.exports = function () {
 
             // If it doesn't exist, create new instance
             if (!this.modalObj) {
-                this.modalObj = new window['FlowUI'].Modal();
+                this.modalObj = new Modal();
             }
 
             // If dialog content requires http request, show loader before rendering
             if (this.url || this.promise) {
-                this.loaderObj = new window['FlowUI'].Loader({
+                this.loaderObj = new Loader({
                     modalId: this.modalObj.id
                 });
             }
@@ -547,15 +621,15 @@ module.exports = function () {
  */
 
 var DialogOptions = function DialogOptions(_ref2) {
-    var className = _ref2.className;
-    var _ref2$stackable = _ref2.stackable;
-    var stackable = _ref2$stackable === undefined ? false : _ref2$stackable;
-    var _ref2$escapable = _ref2.escapable;
-    var escapable = _ref2$escapable === undefined ? true : _ref2$escapable;
-    var _ref2$animation = _ref2.animation;
-    var animation = _ref2$animation === undefined ? {} : _ref2$animation;
-    var _ref2$events = _ref2.events;
-    var events = _ref2$events === undefined ? {} : _ref2$events;
+    var className = _ref2.className,
+        _ref2$stackable = _ref2.stackable,
+        stackable = _ref2$stackable === undefined ? false : _ref2$stackable,
+        _ref2$escapable = _ref2.escapable,
+        escapable = _ref2$escapable === undefined ? true : _ref2$escapable,
+        _ref2$animation = _ref2.animation,
+        animation = _ref2$animation === undefined ? {} : _ref2$animation,
+        _ref2$events = _ref2.events,
+        events = _ref2$events === undefined ? {} : _ref2$events;
 
     _classCallCheck(this, DialogOptions);
 
@@ -571,98 +645,18 @@ var DialogOptions = function DialogOptions(_ref2) {
     };
 };
 
-},{"./helpers.js":2}],2:[function(require,module,exports){
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-module.exports = function () {
-    function Helpers() {
-        _classCallCheck(this, Helpers);
-    }
-
-    _createClass(Helpers, null, [{
-        key: "scrollTo",
-
-
-        /**
-         * Scroll to
-         * @param element
-         * @param to
-         * @param duration
-         */
-
-        value: function scrollTo(element, to, duration) {
-
-            var _this = this;
-
-            var start = element.scrollTop,
-                change = to - start,
-                increment = 20;
-
-            var animateScroll = function animateScroll(elapsedTime) {
-                elapsedTime += increment;
-                var position = _this.easeInOut(elapsedTime, start, change, duration);
-                element.scrollTop = position;
-                if (elapsedTime < duration) {
-                    setTimeout(function () {
-                        animateScroll(elapsedTime);
-                    }, increment);
-                }
-            };
-
-            animateScroll(0);
-        }
-
-        /**
-         * Easing Function for Scrolling
-         * @param currentTime
-         * @param start
-         * @param change
-         * @param duration
-         * @returns {*}
-         */
-
-    }, {
-        key: "easeInOut",
-        value: function easeInOut(currentTime, start, change, duration) {
-            currentTime /= duration / 2;
-            if (currentTime < 1) {
-                return change / 2 * currentTime * currentTime + start;
-            }
-            currentTime -= 1;
-            return -change / 2 * (currentTime * (currentTime - 2) - 1) + start;
-        }
-    }]);
-
-    return Helpers;
-}();
-
-},{}],3:[function(require,module,exports){
+},{"../../loader/js/index.js":3,"../../modal/js/index.js":4,"./helpers.js":1}],3:[function(require,module,exports){
 'use strict';
 
 // Dependencies
-var Modal = require('./modal/js/modal.js');
-var Loader = require('./loader/js/loader.js');
-var Dialog = require('./dialog/js/dialog.js');
 
-// Export
-module.exports = {
-    Modal: Modal,
-    Loader: Loader,
-    Dialog: Dialog
-};
-
-},{"./dialog/js/dialog.js":1,"./loader/js/loader.js":4,"./modal/js/modal.js":5}],4:[function(require,module,exports){
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Modal = require('../../modal/js/index.js');
 
 module.exports = function () {
 
@@ -675,7 +669,7 @@ module.exports = function () {
      * props.id : id of loader
      */
     function Loader() {
-        var props = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+        var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
         _classCallCheck(this, Loader);
 
@@ -686,12 +680,14 @@ module.exports = function () {
 
         this.type = "loader";
 
+        window['FlowUI'] = window['FlowUI'] || {};
+
         this._render();
         this._exportObjInstance();
     }
 
     _createClass(Loader, [{
-        key: "_exportObjInstance",
+        key: '_exportObjInstance',
 
 
         /**
@@ -700,6 +696,7 @@ module.exports = function () {
          * @private
          */
         value: function _exportObjInstance() {
+
             window['FlowUI'] = window['FlowUI'] || {};
             window['FlowUI']._loaders = window['FlowUI']._loaders || {};
             window['FlowUI']._loaders[this.id] = this;
@@ -714,7 +711,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_render",
+        key: '_render',
         value: function _render() {
 
             this._renderModal();
@@ -742,9 +739,9 @@ module.exports = function () {
          */
 
     }, {
-        key: "_renderModal",
+        key: '_renderModal',
         value: function _renderModal() {
-            this.modalObj = new window['FlowUI'].Modal({
+            this.modalObj = new Modal({
                 id: this.modalId,
                 parent: this.parent
             });
@@ -756,7 +753,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_centerVertically",
+        key: '_centerVertically',
         value: function _centerVertically() {
 
             var loaderElement = document.getElementById(this.id);
@@ -790,7 +787,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_animateIn",
+        key: '_animateIn',
         value: function _animateIn() {
             var _this = this;
 
@@ -806,7 +803,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "_animateOut",
+        key: '_animateOut',
         value: function _animateOut() {
             document.getElementById(this.id).className += " zoomOutLoader";
         }
@@ -817,9 +814,9 @@ module.exports = function () {
          */
 
     }, {
-        key: "_close",
+        key: '_close',
         value: function _close() {
-            var dispose = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+            var dispose = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
             this._animateOut();
             if (dispose) {
@@ -834,18 +831,18 @@ module.exports = function () {
          */
 
     }, {
-        key: "_dispose",
+        key: '_dispose',
         value: function _dispose() {
 
             delete window.FlowUI['_loaders'][this.id];
         }
     }, {
-        key: "close",
+        key: 'close',
         get: function get() {
             return this._close;
         }
     }, {
-        key: "dispose",
+        key: 'dispose',
         get: function get() {
             return this._dispose;
         }
@@ -854,10 +851,10 @@ module.exports = function () {
     return Loader;
 }();
 
-},{}],5:[function(require,module,exports){
+},{"../../modal/js/index.js":4}],4:[function(require,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -865,115 +862,132 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 module.exports = function () {
 
-	/**
-  * Modal Constructor
-  * @param props
-  * @param.id : Modal Id
-  * @param.parent : Parent element to inject modal into
-  * @param.className : Class names to append to modal
+    /**
+     * Modal Constructor
+     * @param props
+     * @param.id : Modal Id
+     * @param.parent : Parent element to inject modal into
+     * @param.className : Class names to append to modal
      */
-	function Modal(props) {
-		_classCallCheck(this, Modal);
+    function Modal(props) {
+        _classCallCheck(this, Modal);
 
-		props = props || {};
+        props = props || {};
 
-		this.id = props.id || "modal-" + new Date().getTime();
-		this.parent = props.parent ? _typeof(props.parent) === 'object' ? props.parent : document.querySelector(props.parent) : document.body;
-		this.className = props.className || "";
-		this.children = {}; // associative array of child elements using this modal
+        this.id = props.id || "modal-" + new Date().getTime();
+        this.parent = props.parent ? _typeof(props.parent) === 'object' ? props.parent : document.querySelector(props.parent) : document.body;
+        this.className = props.className || "";
+        this.children = {}; // associative array of child elements using this modal
 
-		// Public Properties
-		this.type = "modal";
-		this.element = null;
+        // Public Properties
+        this.type = "modal";
+        this.element = null;
 
-		// Check if modal already exists, if so assign values from original
-		// and don't re-render or export instance
-		if (window['FlowUI']._modals && window['FlowUI']._modals[this.id]) {
-			Object.assign(this, window['FlowUI']._modals[this.id]);
-			return;
-		}
+        window['FlowUI'] = window['FlowUI'] || {};
 
-		this._render();
-		this._exportObjInstance();
-	}
+        // Check if modal already exists, if so assign values from original
+        // and don't re-render or export instance
+        if (window['FlowUI']._modals && window['FlowUI']._modals[this.id]) {
+            Object.assign(this, window['FlowUI']._modals[this.id]);
+            return;
+        }
 
-	_createClass(Modal, [{
-		key: '_exportObjInstance',
+        this._render();
+        this._exportObjInstance();
+    }
+
+    _createClass(Modal, [{
+        key: '_exportObjInstance',
 
 
-		/**
-   * Save reference to instantiated modal to window
-   * so can access to object through DOM
-   * @private
-   */
-		value: function _exportObjInstance() {
-			window['FlowUI'] = window['FlowUI'] || {};
-			window['FlowUI']._modals = window['FlowUI']._modals || {};
-			window['FlowUI']._modals[this.id] = this;
-		}
+        /**
+         * Save reference to instantiated modal to window
+         * so can access to object through DOM
+         * @private
+         */
+        value: function _exportObjInstance() {
+            window['FlowUI'] = window['FlowUI'] || {};
+            window['FlowUI']._modals = window['FlowUI']._modals || {};
+            window['FlowUI']._modals[this.id] = this;
+        }
 
-		/**
-   * Render Modal
-   * @private
-   */
+        /**
+         * Render Modal
+         * @private
+         */
 
-	}, {
-		key: '_render',
-		value: function _render() {
+    }, {
+        key: '_render',
+        value: function _render() {
 
-			this.parent.className += ' flowui-modal-parent';
+            this.parent.className += ' flowui-modal-parent';
 
-			var container = document.createElement("div");
-			container.setAttribute("id", this.id);
-			container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
-			this.parent.appendChild(container);
+            var container = document.createElement("div");
+            container.setAttribute("id", this.id);
+            container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
+            this.parent.appendChild(container);
 
-			this.element = container;
-		}
+            this.element = container;
+        }
 
-		/**
-   * Close Modal
-   * @private
-   */
+        /**
+         * Close Modal
+         * @private
+         */
 
-	}, {
-		key: '_close',
-		value: function _close() {
-			var _this = this;
+    }, {
+        key: '_close',
+        value: function _close() {
+            var _this = this;
 
-			var modalElement = document.getElementById(this.id);
-			modalElement.className += " fadeOut";
+            var modalElement = document.getElementById(this.id);
+            modalElement.className += " fadeOut";
 
-			setTimeout(function () {
-				modalElement.parentNode.removeChild(modalElement);
-				_this.parent.className = _this.parent.className.replace('flowui-modal-parent', '');
-			}, 1000);
+            setTimeout(function () {
+                modalElement.parentNode.removeChild(modalElement);
+                _this.parent.className = _this.parent.className.replace('flowui-modal-parent', '');
+            }, 1000);
 
-			this._dispose();
-		}
+            this._dispose();
+        }
 
-		// Remove object references
+        // Remove object references
 
-	}, {
-		key: '_dispose',
-		value: function _dispose() {
+    }, {
+        key: '_dispose',
+        value: function _dispose() {
 
-			// Delete any child object references (UI elements using this modal obj)
-			for (var key in this.children) {
-				this.children[key].dispose();
-			}
-			delete window['FlowUI']._modals[this.id];
-		}
-	}, {
-		key: 'close',
-		get: function get() {
-			return this._close;
-		}
-	}]);
+            // Delete any child object references (UI elements using this modal obj)
+            for (var key in this.children) {
+                this.children[key].dispose();
+            }
+            delete window['FlowUI']._modals[this.id];
+        }
+    }, {
+        key: 'close',
+        get: function get() {
+            return this._close;
+        }
+    }]);
 
-	return Modal;
+    return Modal;
 }();
 
-},{}]},{},[3])(3)
+},{}],5:[function(require,module,exports){
+'use strict';
+
+// Dependencies
+var Modal = require('./modal/js/index.js');
+var Loader = require('./loader/js/index.js');
+var Dialog = require('./dialog/js/index.js');
+
+// Export
+module.exports = {
+    Modal: Modal,
+    Loader: Loader,
+    Dialog: Dialog
+};
+
+},{"./dialog/js/index.js":2,"./loader/js/index.js":3,"./modal/js/index.js":4}]},{},[5])(5)
 });
 
