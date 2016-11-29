@@ -36,4 +36,5 @@
   "devDependencies": {
     "gulp-umd": "^0.2.0"
   }
+  
 }
