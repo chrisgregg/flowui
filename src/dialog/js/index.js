@@ -244,14 +244,21 @@ module.exports = class Dialog {
         const dialogWidth = dialogElement.offsetWidth;
         const scrollPosition = window.scrollY;
 
-        let y = scrollPosition + (viewportHeight / 2) - (dialogHeight / 2);
+        let y = (viewportHeight / 2) - (dialogHeight / 2);
         y = y < 0 ? 30 : y;
 
         dialogElement.style.top = y + 'px';
 
-        // If dialog heigh doesn't fit in viewport, scroll page to top of dialog
+        // If dialog doesn't fit in viewport, switch from fixed position modal to absolute
+        // position modal, as user will need to be able to scroll page to view bottom of dialog
         if (dialogHeight > viewportHeight) {
+            this.modalObj.isPositionFixed = false;
+            y += scrollPosition;
+            dialogElement.style.top = y + 'px';
             this._scrollToDialog();
+        }
+        else {
+            dialogElement.style.top = y + 'px';
         }
 
     }

@@ -327,14 +327,20 @@ module.exports = function () {
             var dialogWidth = dialogElement.offsetWidth;
             var scrollPosition = window.scrollY;
 
-            var y = scrollPosition + viewportHeight / 2 - dialogHeight / 2;
+            var y = viewportHeight / 2 - dialogHeight / 2;
             y = y < 0 ? 30 : y;
 
             dialogElement.style.top = y + 'px';
 
-            // If dialog heigh doesn't fit in viewport, scroll page to top of dialog
+            // If dialog doesn't fit in viewport, switch from fixed position modal to absolute
+            // position modal, as user will need to be able to scroll page to view bottom of dialog
             if (dialogHeight > viewportHeight) {
+                this.modalObj.isPositionFixed = false;
+                y += scrollPosition;
+                dialogElement.style.top = y + 'px';
                 this._scrollToDialog();
+            } else {
+                dialogElement.style.top = y + 'px';
             }
         }
 
@@ -645,7 +651,22 @@ var DialogOptions = function DialogOptions(_ref2) {
     };
 };
 
-},{"../../loader/js/index.js":3,"../../modal/js/index.js":4,"./helpers.js":1}],3:[function(require,module,exports){
+},{"../../loader/js/index.js":4,"../../modal/js/index.js":5,"./helpers.js":1}],3:[function(require,module,exports){
+'use strict';
+
+// Dependencies
+var Modal = require('./modal/js/index.js');
+var Loader = require('./loader/js/index.js');
+var Dialog = require('./dialog/js/index.js');
+
+// Export
+module.exports = {
+    Modal: Modal,
+    Loader: Loader,
+    Dialog: Dialog
+};
+
+},{"./dialog/js/index.js":2,"./loader/js/index.js":4,"./modal/js/index.js":5}],4:[function(require,module,exports){
 'use strict';
 
 // Dependencies
@@ -720,7 +741,7 @@ module.exports = function () {
             if (!document.getElementById(this.id)) {
                 var container = document.createElement("div");
                 container.id = this.id;
-                container.className = "flowui-loader";
+                container.className = "flowui-loader flowui-loader-fixed";
 
                 var loaderElement = document.createElement("div");
                 loaderElement.className = "spinner";
@@ -754,32 +775,30 @@ module.exports = function () {
 
     }, {
         key: '_centerVertically',
-        value: function _centerVertically() {
+        value: function _centerVertically() {}
 
-            var loaderElement = document.getElementById(this.id);
-            var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-            var parentHeight = Math.max(this.parent.clientHeight, this.parent.innerHeight || 0);
-            var loaderHeight = loaderElement.offsetHeight;
-            var loaderWidth = loaderElement.offsetWidth;
-            var scrollPosition = window.scrollY;
-
-            // Center vertically in parent container
-            var topLoaderDiv = parentHeight / 2 - loaderHeight / 2;
-
-            // If parentHeight is >= viewportHeight, we need to use viewportHeight instead
-            if (parentHeight > viewportHeight) {
-                topLoaderDiv = viewportHeight / 2 - loaderHeight / 2;
-
-                // If user is scrolled down at all, we need to adjust to make sure loader
-                // is displayed within current viewport
-                if (scrollPosition > 0) {
-                    topLoaderDiv += scrollPosition;
-                }
+        // We prob don't need this anymore we render loader as fixed, we can just use CSS
+        /*
+        let loaderElement = document.getElementById(this.id);
+        const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        const parentHeight = Math.max(this.parent.clientHeight, this.parent.innerHeight || 0);
+        const loaderHeight = loaderElement.offsetHeight;
+        const loaderWidth = loaderElement.offsetWidth;
+        const scrollPosition = window.scrollY;
+          // Center vertically in parent container
+        let topLoaderDiv = (parentHeight / 2) - (loaderHeight / 2);
+          // If parentHeight is >= viewportHeight, we need to use viewportHeight instead
+        if (parentHeight > viewportHeight) {
+            topLoaderDiv = (viewportHeight / 2) - (loaderHeight / 2);
+              // If user is scrolled down at all, we need to adjust to make sure loader
+            // is displayed within current viewport
+            if (scrollPosition > 0) {
+                topLoaderDiv += scrollPosition;
             }
-
-            loaderElement.style.top = topLoaderDiv + "px";
-            loaderElement.style.left = 'calc(50% - ' + loaderWidth / 2 + 'px)';
         }
+          loaderElement.style.top = topLoaderDiv + "px";
+        loaderElement.style.left = 'calc(50% - ' + (loaderWidth/2)  + 'px)';
+        */
 
         /**
          * Handles Animating Dialog In
@@ -851,7 +870,7 @@ module.exports = function () {
     return Loader;
 }();
 
-},{"../../modal/js/index.js":4}],4:[function(require,module,exports){
+},{"../../modal/js/index.js":5}],5:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -882,6 +901,7 @@ module.exports = function () {
         // Public Properties
         this.type = "modal";
         this.element = null;
+        this._isPositionFixed = true;
 
         window['FlowUI'] = window['FlowUI'] || {};
 
@@ -924,7 +944,7 @@ module.exports = function () {
 
             var container = document.createElement("div");
             container.setAttribute("id", this.id);
-            container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
+            container.setAttribute("class", 'flowui-modal ' + (this.isPositionFixed ? 'flowui-modal-fixed' : '') + ' animated fadeIn ' + this.className);
             this.parent.appendChild(container);
 
             this.element = container;
@@ -968,26 +988,27 @@ module.exports = function () {
         get: function get() {
             return this._close;
         }
+    }, {
+        key: 'isPositionFixed',
+        get: function get() {
+            return this._isPositionFixed;
+        }
+
+        // Allow other components to modify positioning of modal
+        // this is necessary, as dialog's can be larger than viewport
+        ,
+        set: function set(value) {
+            this._isPositionFixed = value;
+            if (value === false) {
+                var dialogContainer = document.getElementById(this.id);
+                dialogContainer.className = dialogContainer.className.replace('flowui-modal-fixed', '');
+            }
+        }
     }]);
 
     return Modal;
 }();
 
-},{}],5:[function(require,module,exports){
-'use strict';
-
-// Dependencies
-var Modal = require('./modal/js/index.js');
-var Loader = require('./loader/js/index.js');
-var Dialog = require('./dialog/js/index.js');
-
-// Export
-module.exports = {
-    Modal: Modal,
-    Loader: Loader,
-    Dialog: Dialog
-};
-
-},{"./dialog/js/index.js":2,"./loader/js/index.js":3,"./modal/js/index.js":4}]},{},[5])(5)
+},{}]},{},[3])(3)
 });
 

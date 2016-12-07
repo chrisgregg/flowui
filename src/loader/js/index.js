@@ -70,7 +70,7 @@ module.exports = class Loader {
         if (!document.getElementById(this.id)) {
             let container = document.createElement("div");
             container.id = this.id;
-            container.className = "flowui-loader";
+            container.className = "flowui-loader flowui-loader-fixed";
 
             let loaderElement = document.createElement("div");
             loaderElement.className = "spinner";
@@ -102,6 +102,8 @@ module.exports = class Loader {
      */
     _centerVertically() {
 
+        // We prob don't need this anymore we render loader as fixed, we can just use CSS
+        /*
         let loaderElement = document.getElementById(this.id);
         const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         const parentHeight = Math.max(this.parent.clientHeight, this.parent.innerHeight || 0);
@@ -125,6 +127,7 @@ module.exports = class Loader {
 
         loaderElement.style.top = topLoaderDiv + "px";
         loaderElement.style.left = 'calc(50% - ' + (loaderWidth/2)  + 'px)';
+        */
 
     }
 

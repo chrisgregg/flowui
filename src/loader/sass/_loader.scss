@@ -11,6 +11,12 @@
   border-radius: 50%;
   background: #FFF;
 
+  &.flowui-loader-fixed {
+    position: fixed;
+    top:calc(50% - 40px);
+    left:calc(50% - 40px);
+  }
+
   .spinner {
     @include mixin-box-sizing(border-box);
     width: 100% !important;

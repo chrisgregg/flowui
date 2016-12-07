@@ -29,6 +29,7 @@ module.exports = function () {
         // Public Properties
         this.type = "modal";
         this.element = null;
+        this._isPositionFixed = true;
 
         window['FlowUI'] = window['FlowUI'] || {};
 
@@ -71,7 +72,7 @@ module.exports = function () {
 
             var container = document.createElement("div");
             container.setAttribute("id", this.id);
-            container.setAttribute("class", 'flowui-modal animated fadeIn ' + this.className);
+            container.setAttribute("class", 'flowui-modal ' + (this.isPositionFixed ? 'flowui-modal-fixed' : '') + ' animated fadeIn ' + this.className);
             this.parent.appendChild(container);
 
             this.element = container;
@@ -114,6 +115,22 @@ module.exports = function () {
         key: 'close',
         get: function get() {
             return this._close;
+        }
+    }, {
+        key: 'isPositionFixed',
+        get: function get() {
+            return this._isPositionFixed;
+        }
+
+        // Allow other components to modify positioning of modal
+        // this is necessary, as dialog's can be larger than viewport
+        ,
+        set: function set(value) {
+            this._isPositionFixed = value;
+            if (value === false) {
+                var dialogContainer = document.getElementById(this.id);
+                dialogContainer.className = dialogContainer.className.replace('flowui-modal-fixed', '');
+            }
         }
     }]);
 
