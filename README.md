@@ -4,7 +4,7 @@
 
 <p><strong>This project is work in progress, and not ready to be used in the wild.</strong></p>
 
-<h2>Dialog API Reference</h2>
+<h2>1. Dialog API Reference</h2>
 
 <ol>
   <li><a href="#dialog">Dialog</a>  
@@ -17,6 +17,9 @@
   <li><a href="#dialog">Loader</a></li>  
   <li><a href="#modal">Modal</a></li>  
 </ol>
+
+<br />
+<br />
 
 <h4 id="dialog">Dialog Properties</h4>
 
@@ -128,8 +131,10 @@
 </tr>
 </table>
 
+<br />
+<br />
 
-<h2>Loader API Reference</h2>
+<h2>2. Loader API Reference</h2>
 
 <table>
 <tr>
@@ -154,9 +159,10 @@
 </tr>
 </table>
 
+<br />
+<br />
 
-
-<h2 id="modal">Modal API Reference</h2>
+<h2 id="modal">3. Modal API Reference</h2>
 
 <table>
 <tr>
