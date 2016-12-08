@@ -6,7 +6,11 @@
 
 <h2>Dialog API Reference</h2>
 
-<h4>Dialog Properties</h4>
+<ol>
+<li><a href="#dialog">Dialog</a></li>
+</ol>
+
+<h4 id="dialog">Dialog Properties</h4>
 
 <table>
 <tr>
@@ -128,6 +132,33 @@
 <tr>
   <td>text</td>
   <td>Text to display below loader</td>
+  <td>String</td>
+</tr>
+<tr>
+  <td>parent</td>
+  <td>Parent DOM element to inject loader (default is document.body)</td>
+  <td>Element or Query Selector</td>
+</tr>
+<tr>
+  <td>promise</td>
+  <td>If provided loader will close when promise is resolved</td>
+  <td>Promise</td>
+</tr>
+</table>
+
+
+
+<h2>Modal API Reference</h2>
+
+<table>
+<tr>
+  <th>Property</th>
+  <th>Description</th>
+  <th>Type</th>
+</tr>
+<tr>
+  <td>parent</td>
+  <td>Parent DOM element to inject modal (default is document.body)</td>
   <td>String</td>
 </tr>
 <tr>
