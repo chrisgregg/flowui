@@ -7,7 +7,15 @@
 <h2>Dialog API Reference</h2>
 
 <ol>
-<li><a href="#dialog">Dialog</a></li>
+  <li><a href="#dialog">Dialog</a>  
+  <ol>
+  <li><a href="#dialogOptions">Options</a></li>
+  <li><a href="#dialogAnimation">Animation</a></li>
+  <li><a href="#dialogEvents">Events</a></li>
+  </ol>  
+  </li>
+  <li><a href="#dialog">Loader</a></li>  
+  <li><a href="#modal">Modal</a></li>  
 </ol>
 
 <h4 id="dialog">Dialog Properties</h4>
@@ -50,7 +58,7 @@
 </tr>
 </table>
 
-<h4>Dialog Options Properties</h4>
+<h4 id="dialogOptions">Dialog Options Properties</h4>
 
 <table>
 <tr>
@@ -80,7 +88,7 @@
 </tr>
 </table>
 
-<h4>Dialog Animation Properties</h4>
+<h4 id="dialogAnimation">Dialog Animation Properties</h4>
 
 <table>
 <tr>
@@ -100,7 +108,7 @@
 </tr>
 </table>
 
-<h4>Dialog Event Properties</h4>
+<h4 id="dialogEvents">Dialog Event Properties</h4>
 
 <table>
 <tr>
@@ -148,7 +156,7 @@
 
 
 
-<h2>Modal API Reference</h2>
+<h2 id="modal">Modal API Reference</h2>
 
 <table>
 <tr>
