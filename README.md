@@ -20,7 +20,6 @@
 </ol>
 
 <br />
-<br />
 
 <h4 id="dialog">Dialog Properties</h4>
 
