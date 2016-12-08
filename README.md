@@ -5,7 +5,7 @@
 <p>Install FlowUI using your preferred package manager: <code>npm install flowui --save </code> or <code>bower install flowui --save</code></p>
 
 
-<h2>1. Dialog API Reference</h2>
+<h4>API Reference</h4>
 
 <ol>
   <li><a href="#dialog">Dialog</a>  
@@ -21,7 +21,7 @@
 
 <br />
 
-<h4 id="dialog">Dialog Properties</h4>
+<h2 id="dialog">1. Dialog</h2>
 
 <table>
 <tr>
@@ -61,7 +61,7 @@
 </tr>
 </table>
 
-<h4 id="dialogOptions">Dialog Options Properties</h4>
+<h4 id="dialogOptions">i. Dialog Options</h4>
 
 <table>
 <tr>
@@ -91,7 +91,7 @@
 </tr>
 </table>
 
-<h4 id="dialogAnimation">Dialog Animation Properties</h4>
+<h4 id="dialogAnimation">ii. Dialog Animation</h4>
 
 <table>
 <tr>
@@ -111,7 +111,7 @@
 </tr>
 </table>
 
-<h4 id="dialogEvents">Dialog Event Properties</h4>
+<h4 id="dialogEvents">iii. Dialog Events</h4>
 
 <table>
 <tr>
@@ -134,7 +134,7 @@
 <br />
 <br />
 
-<h2>2. Loader API Reference</h2>
+<h2>2. Loader</h2>
 
 <table>
 <tr>
@@ -162,7 +162,7 @@
 <br />
 <br />
 
-<h2 id="modal">3. Modal API Reference</h2>
+<h2 id="modal">3. Modal</h2>
 
 <table>
 <tr>
