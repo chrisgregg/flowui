@@ -42,7 +42,7 @@
 <tr>
   <td>options</td>
   <td>Additional options to customize dialog</td>
-  <td>Options (Object)</td>
+  <td>Dialog Options (Object)</td>
 </tr>
 </table>
 
@@ -73,5 +73,45 @@
   <td>events</td>
   <td>Allows you to attached on dialog events such as onopen and onclose</td>
   <td>Events Object</td>
+</tr>
+</table>
+
+<h4>Dialog Animation Properties</h4>
+
+<table>
+<tr>
+  <th>Property</th>
+  <th>Description</th>
+  <th>Type</th>
+</tr>
+<tr>
+  <td>in</td>
+  <td>Animation to apply when first displaying dialog. Possible values include: zoomIn, fadeIn, pulseIn</td>
+  <td>String</td>
+</tr>
+<tr>
+  <td>out</td>
+  <td>Animation to apply when dialog is closed. Possible values include: zoomOut, fadeOut, pulseOut</td>
+  <td>String</td>
+</tr>
+</table>
+
+<h4>Dialog Event Properties</h4>
+
+<table>
+<tr>
+  <th>Property</th>
+  <th>Description</th>
+  <th>Type</th>
+</tr>
+<tr>
+  <td>onopen</td>
+  <td>Function to call when dialog is opened</td>
+  <td>Function</td>
+</tr>
+<tr>
+  <td>onclose</td>
+  <td>Function to call when dialog is closed</td>
+  <td>Function</td>
 </tr>
 </table>
