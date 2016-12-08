@@ -4,9 +4,9 @@
 
 <p><strong>This project is work in progress, and not ready to be used in the wild.</strong></p>
 
-<h2>Dialog</h2>
+<h2>Dialog API Reference</h2>
 
-<p>API Reference for Dialog Object</p>
+<h4>Dialog Properties</h4>
 
 <table>
 <tr>
@@ -46,7 +46,7 @@
 </tr>
 </table>
 
-<p>Dialog Options Object</p>
+<h4>Dialog Options Properties</h4>
 
 <table>
 <tr>
@@ -73,15 +73,5 @@
   <td>events</td>
   <td>Allows you to attached on dialog events such as onopen and onclose</td>
   <td>Events Object</td>
-</tr>
-<tr>
-  <td>buttons</td>
-  <td>Buttons to add to footer of dialog</td>
-  <td>Array</td>
-</tr>
-<tr>
-  <td>options</td>
-  <td>Additional options to customize dialog</td>
-  <td>Options (Object)</td>
 </tr>
 </table>
