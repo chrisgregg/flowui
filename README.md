@@ -115,3 +115,29 @@
   <td>Function</td>
 </tr>
 </table>
+
+
+<h2>Loader API Reference</h2>
+
+<table>
+<tr>
+  <th>Property</th>
+  <th>Description</th>
+  <th>Type</th>
+</tr>
+<tr>
+  <td>text</td>
+  <td>Text to display below loader</td>
+  <td>String</td>
+</tr>
+<tr>
+  <td>parent</td>
+  <td>Parent DOM element to inject loader (default is document.body)</td>
+  <td>Element or Query Selector</td>
+</tr>
+<tr>
+  <td>promise</td>
+  <td>If provided loader will close when promise is resolved</td>
+  <td>Promise</td>
+</tr>
+</table>
