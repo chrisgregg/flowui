@@ -23,6 +23,20 @@
 
 <h2 id="dialog">1. Dialog</h2>
 
+```javascript
+var dialog = new FlowUI.Dialog({
+  title: "My Dialog Title",
+  promise: contentFromPromise,
+  buttons: [
+    { title: 'Yes', onclick: doSomething  },
+    { title: 'No', onclick: function() {
+        dialog.close();
+    }}
+  ],
+  options: {}
+});
+```
+
 <table>
 <tr>
   <th>Property</th>
