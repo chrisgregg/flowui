@@ -550,7 +550,10 @@ module.exports = function () {
         key: '_setState',
         value: function _setState(state) {
 
-            var event = new CustomEvent("stateChange", { detail: { status: state } });
+           // var event = new CustomEvent("stateChange", { detail: { status: state } });
+            // fix to support IE 11 
+             var event = document.createEvent("CustomEvent");
+                        event.initCustomEvent("stateChange", false, false, { status: state });
             this.dialogElement.dispatchEvent(event);
         }
 
